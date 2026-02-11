@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>React App</title>
-    <script src="/path/to/react-app-entry.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Vite Build with Tailwind CSS</title>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="app"></div>
+    <script type="module">
+        import React from 'https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js';
+        import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js';
+        import App from './src/App.jsx';
+
+        ReactDOM.render(<App />, document.getElementById('app'));
+    </script>
 </body>
 </html>
