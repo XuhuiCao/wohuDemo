@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { AgentCenter } from './components/AgentCenter';
@@ -18,6 +19,7 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
   const [selectedAgentForCenter, setSelectedAgentForCenter] = useState<Agent | null>(null);
   const [agentToEdit, setAgentToEdit] = useState<Agent | null>(null);
+  const [initialPromptForBuilder, setInitialPromptForBuilder] = useState<string | null>(null);
   
   // Lifted State
   const [chats, setChats] = useState<ChatSession[]>(() => [...MOCK_CHATS].sort((a, b) => b.updatedAt - a.updatedAt));
@@ -117,12 +119,15 @@ function App() {
   };
 
   const handleViewChange = (view: ViewState) => {
+    // If exiting edit mode and returning to center, ensure the edited agent is selected for preview
     if (view === ViewState.AGENT_CENTER) {
-        setSelectedAgentForCenter(null);
+        if (agentToEdit) {
+            setSelectedAgentForCenter(agentToEdit);
+        }
+    } else if (view !== ViewState.AGENT_BUILDER) {
+        // Clear edit state when moving elsewhere (except builder or center returning)
     }
-    if (view === ViewState.HOME || view === ViewState.MY_CONTENT) {
-        setAgentToEdit(null);
-    }
+
     setCurrentView(view);
   };
 
@@ -133,6 +138,27 @@ function App() {
 
   const handleEditAgent = (agent: Agent) => {
       setAgentToEdit(agent);
+      setCurrentView(ViewState.AGENT_BUILDER);
+  };
+
+  const handleQuickBuild = (prompt: string) => {
+      setInitialPromptForBuilder(prompt);
+      setAgentToEdit(null); // It's a new agent
+      setCurrentView(ViewState.AGENT_BUILDER);
+  };
+
+  const handleProCodeBuild = (enName: string, cnName: string) => {
+      const newAgent: Agent = {
+          id: 'new-' + Date.now(),
+          name: cnName,
+          description: '专业智能体助手',
+          version: '0.1.0',
+          status: 'draft',
+          type: 'code',
+          space: '崇启的空间'
+      };
+      setAgentToEdit(newAgent);
+      setInitialPromptForBuilder(null);
       setCurrentView(ViewState.AGENT_BUILDER);
   };
 
@@ -147,6 +173,8 @@ function App() {
                 setCurrentView(ViewState.HOME);
             }} 
             onEditAgent={handleEditAgent}
+            onQuickBuild={handleQuickBuild}
+            onProCodeBuild={handleProCodeBuild}
         />;
       case ViewState.GENERATION_CENTER:
         return <GenerationCenter onBack={() => setCurrentView(ViewState.HOME)} />;

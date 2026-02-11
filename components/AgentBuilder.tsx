@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
@@ -56,7 +57,8 @@ import {
   History,
   User as UserIcon,
   CheckCircle,
-  Info
+  Info,
+  LogOut
 } from 'lucide-react';
 import { InputArea } from './InputArea';
 import { Message, Skill, MCP, KnowledgeDoc, ViewState } from '../types';
@@ -92,7 +94,7 @@ const IconMap: Record<string, any> = {
     Globe: Globe,
     BookOpen: BookOpen,
     FileText: FileText,
-    HardDrive: HardDrive,
+    HardDrive: Database,
     Database: Database,
     Send: Send,
     GitBranch: GitBranch,
@@ -1674,7 +1676,16 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
             <button onClick={() => setActiveTab('deploy')} className={`py-4 text-xs font-semibold border-b-2 transition-all ${activeTab === 'deploy' ? 'border-[#55635C] text-[#55635C]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>部署记录</button>
             <button onClick={() => setActiveTab('config')} className={`py-4 text-xs font-semibold border-b-2 transition-all ${activeTab === 'config' ? 'border-[#55635C] text-[#55635C]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>消费配置</button>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+             {isEditMode && (
+                 <button 
+                    onClick={onClose}
+                    className="flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors group"
+                 >
+                    退出编辑
+                    <LogOut size={16} className="transition-transform group-hover:translate-x-0.5" />
+                 </button>
+             )}
              <div className="relative" ref={versionTriggerRef}>
                  <div 
                     onClick={() => setShowVersionHistory(!showVersionHistory)}
@@ -1736,7 +1747,7 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
             >
                 发布
             </button>
-             <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 ml-2" title="退出构建"><X size={18}/></button>
+             <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100" title="退出构建"><X size={18}/></button>
         </div>
       </div>
       <div className="flex-1 overflow-hidden">{renderContent()}</div>

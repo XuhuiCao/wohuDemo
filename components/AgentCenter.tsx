@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
   Plus, 
@@ -43,10 +44,15 @@ import {
   HelpCircle,
   Tag,
   Undo2,
-  FileCode
+  FileCode,
+  ChevronDown,
+  Upload,
+  ArrowRight,
+  // Fix: Added missing Zap icon import
+  Zap
 } from 'lucide-react';
 import { MOCK_AGENTS, OFFICIAL_SKILLS, OFFICIAL_MCPS, MOCK_DOCS } from '../constants';
-import { Agent, Message } from '../types';
+import { Agent, Message, ViewState } from '../types';
 import { createPortal } from 'react-dom';
 import { InputArea } from './InputArea';
 
@@ -54,6 +60,8 @@ interface AgentCenterProps {
   onBack: () => void;
   initialAgent?: Agent | null;
   onEditAgent?: (agent: Agent) => void;
+  onQuickBuild?: (prompt: string) => void;
+  onProCodeBuild?: (enName: string, cnName: string) => void;
 }
 
 // Mock Log Data
@@ -140,12 +148,27 @@ const getStatusConfig = (status: string) => {
     }
 }
 
-export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, onEditAgent }) => {
+export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, onEditAgent, onQuickBuild, onProCodeBuild }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [onlyMyCreated, setOnlyMyCreated] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(initialAgent || null);
   const [activeDetailTab, setActiveDetailTab] = useState('智能体概览');
   
+  // Create Dropdown State
+  const [showCreateDropdown, setShowCreateDropdown] = useState(false);
+  const createButtonRef = useRef<HTMLDivElement>(null);
+  
+  // Modals State
+  const [showQuickBuildModal, setShowQuickBuildModal] = useState(false);
+  const [showProCodeModal, setShowProCodeModal] = useState(false);
+  
+  // Quick Build Input State
+  const [quickBuildPrompt, setQuickBuildPrompt] = useState('');
+  
+  // ProCode Form State
+  const [proCodeEnName, setProCodeEnName] = useState('');
+  const [proCodeCnName, setProCodeCnName] = useState('');
+
   // Update internal selectedAgent if initialAgent changes
   useEffect(() => {
     if (initialAgent) {
@@ -201,6 +224,21 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
         const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'model', content: `这是智能体的回复：${text}`, timestamp: Date.now() };
         setPreviewMessages(prev => [...prev, aiMsg]);
     }, 1000);
+  };
+
+  const handleQuickBuildSubmit = () => {
+      if (!quickBuildPrompt.trim()) return;
+      if (onQuickBuild) onQuickBuild(quickBuildPrompt);
+      setShowQuickBuildModal(false);
+      setQuickBuildPrompt('');
+  };
+
+  const handleProCodeSubmit = () => {
+      if (!proCodeCnName.trim() || !proCodeEnName.trim()) return;
+      if (onProCodeBuild) onProCodeBuild(proCodeEnName, proCodeCnName);
+      setShowProCodeModal(false);
+      setProCodeEnName('');
+      setProCodeCnName('');
   };
 
   const renderConsumptionModals = () => {
@@ -550,7 +588,7 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
                             ))}
                         </div>
                     </div>
-                    <div className="p-4 bg-white border-t border-gray-200">
+                    <div className="p-4 bg-white border-t border-gray-100">
                         <div className="max-w-3xl mx-auto">
                             <InputArea onSendMessage={handlePreviewSend} mode="standard" placeholder="在此测试智能体效果..." disableConfig={true} />
                             <p className="text-[10px] text-center text-gray-400 mt-2">预览环境仅用于调试，对话内容不计入正式统计</p>
@@ -866,6 +904,114 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
     }
   };
 
+  const renderQuickBuildModal = () => {
+    if (!showQuickBuildModal) return null;
+    return createPortal(
+      <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/30 backdrop-blur-[2px] animate-in fade-in duration-200" onClick={() => setShowQuickBuildModal(false)}>
+        <div 
+          className="bg-white rounded-2xl shadow-2xl w-[800px] p-8 animate-in zoom-in-95 duration-200 relative border border-gray-200"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-900">快速构建智能体</h2>
+            <button onClick={() => setShowQuickBuildModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="relative group p-1.5 bg-[#F9F8F6] rounded-2xl border border-[#E9E5E0]">
+            <textarea 
+              value={quickBuildPrompt}
+              onChange={(e) => setQuickBuildPrompt(e.target.value)}
+              className="w-full h-48 bg-transparent p-6 text-base text-gray-700 placeholder:text-[#C5BDB2] outline-none resize-none leading-relaxed"
+              placeholder="@构建智能体"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleQuickBuildSubmit();
+                }
+              }}
+            />
+            <div className="flex justify-between items-center px-4 pb-4">
+              <button className="w-10 h-10 flex items-center justify-center bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition-all shadow-sm">
+                <Plus size={20} />
+              </button>
+              <button 
+                onClick={handleQuickBuildSubmit}
+                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shadow-sm ${quickBuildPrompt.trim() ? 'bg-[#55635C] text-white hover:bg-[#444F49]' : 'bg-gray-200 text-gray-400'}`}
+              >
+                <ArrowUp size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
+  const renderProCodeBuildModal = () => {
+    if (!showProCodeModal) return null;
+    return createPortal(
+      <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/30 backdrop-blur-[2px] animate-in fade-in duration-200" onClick={() => setShowProCodeModal(false)}>
+        <div 
+          className="bg-white rounded-2xl shadow-2xl w-[500px] p-8 animate-in zoom-in-95 duration-200 relative border border-gray-200"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-lg font-bold text-gray-900">新建智能体</h2>
+            <button onClick={() => setShowProCodeModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                <span className="text-red-500 font-bold">*</span>智能体英文名称
+              </label>
+              <input 
+                value={proCodeEnName}
+                onChange={(e) => setProCodeEnName(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-1 focus:ring-[#55635C] focus:border-[#55635C] outline-none bg-gray-50/30 transition-all"
+                placeholder="请输入"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                <span className="text-red-500 font-bold">*</span>智能体中文名称
+              </label>
+              <input 
+                value={proCodeCnName}
+                onChange={(e) => setProCodeCnName(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-1 focus:ring-[#55635C] focus:border-[#55635C] outline-none bg-gray-50/30 transition-all"
+                placeholder="当前的产品空间名称"
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-3 mt-10">
+            <button 
+              onClick={() => setShowProCodeModal(false)}
+              className="px-6 py-2 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              取消
+            </button>
+            <button 
+              onClick={handleProCodeSubmit}
+              disabled={!proCodeCnName.trim() || !proCodeEnName.trim()}
+              className={`px-8 py-2 rounded-xl text-sm font-bold shadow-md transition-all ${proCodeCnName.trim() && proCodeEnName.trim() ? 'bg-[#55635C] text-white hover:bg-[#444F49]' : 'bg-gray-200 text-gray-400'}`}
+            >
+              新建
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
   if (selectedAgent) {
       return (
           <div className="flex-1 h-full bg-[#F9FAFB] flex flex-col font-sans overflow-hidden">
@@ -1033,9 +1179,39 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
                         />
                         <span className="text-sm text-gray-600">我创建的</span>
                     </label>
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-[#55635C] text-white rounded-lg hover:bg-[#444F49] text-sm font-medium shadow-sm transition-all">
-                        <Plus size={16} /> 新建智能体
-                    </button>
+                    <div className="relative" ref={createButtonRef} onMouseEnter={() => setShowCreateDropdown(true)} onMouseLeave={() => setShowCreateDropdown(false)}>
+                        <button className="flex items-center gap-1.5 px-4 py-2 bg-[#55635C] text-white rounded-lg hover:bg-[#444F49] text-sm font-medium shadow-sm transition-all group">
+                            <Plus size={16} /> 
+                            <span>新建智能体</span>
+                            <ChevronDown size={14} className={`transition-transform duration-200 ${showCreateDropdown ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        {showCreateDropdown && (
+                          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                             <button 
+                                onClick={() => { setShowQuickBuildModal(true); setShowCreateDropdown(false); }}
+                                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                             >
+                                <Zap size={16} className="text-[#55635C]" />
+                                <div>
+                                  <div className="font-bold">快速构建</div>
+                                  <div className="text-[10px] text-gray-400">基于 AI 辅助快速生成</div>
+                                </div>
+                             </button>
+                             <div className="h-px bg-gray-100 mx-1"></div>
+                             <button 
+                                onClick={() => { setShowProCodeModal(true); setShowCreateDropdown(false); }}
+                                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                             >
+                                <Code size={16} className="text-[#55635C]" />
+                                <div>
+                                  <div className="font-bold">编码构建</div>
+                                  <div className="text-[10px] text-gray-400">手动配置各模块参数</div>
+                                </div>
+                             </button>
+                          </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -1112,6 +1288,10 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
               <ChevronRight size={16} />
           </button>
       </div>
+      
+      {/* Modals */}
+      {renderQuickBuildModal()}
+      {renderProCodeBuildModal()}
     </div>
   );
 };
