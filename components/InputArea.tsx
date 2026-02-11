@@ -10,13 +10,11 @@ import {
   Plus, 
   ChevronDown, 
   Check, 
-  Image as ImageIcon, 
   RefreshCw, 
   FileText, 
   PenTool, 
   Sparkles, 
   Bot,
-  Blocks,
   Server,
   Code2,
   Database,
@@ -71,9 +69,6 @@ const SLASH_COMMANDS = [
 
 const IconMap: Record<string, any> = {
     Bot: Bot,
-    Image: ImageIcon,
-    Video: ImageIcon, // Reused
-    Mic: ImageIcon, // Reused
     Network: Globe,
     Globe: Globe,
     BookOpen: FileText,
@@ -96,7 +91,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
   const [selectedModel, setSelectedModel] = useState(MODELS[0]);
   const [showModelMenu, setShowModelMenu] = useState(false);
   
-  // Tools State (Modal)
   const [activeSkills, setActiveSkills] = useState<Skill[]>([]);
   const [activeMcps, setActiveMcps] = useState<MCP[]>([]);
   const [showSelectorModal, setShowSelectorModal] = useState<'skills' | 'mcp' | null>(null);
@@ -123,7 +117,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
     }
   }));
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
@@ -132,7 +125,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
     }
   }, [input, mode]);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modelMenuRef.current && !modelMenuRef.current.contains(event.target as Node)) {
@@ -150,7 +142,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
     };
   }, []);
 
-  // Reset preview item when modal closes
   useEffect(() => {
     if (!showSelectorModal) {
       setPreviewItem(null);
@@ -273,146 +264,119 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
 
     const renderDetailPanel = () => {
       if (!previewItem) return null;
-      // @ts-ignore
       const Icon = IconMap[previewItem.icon] || Box;
       const isSelected = selectedList.some(s => s.id === previewItem.id);
       const mockInfo = {
           version: 'v1.0.2',
           updated: '2天前',
           downloads: '1.2k',
-          // @ts-ignore
-          author: previewItem.author || 'Wohu Official',
+          author: (previewItem as any).author || 'Wohu Official',
           title: previewItem.name,
           description: previewItem.description
       };
   
       return (
-          <div className="w-80 h-full bg-gray-50 border-l border-gray-200 flex flex-col animate-in slide-in-from-right duration-200 z-10 shrink-0">
-              <div className="p-4 border-b border-gray-200 bg-white flex items-center justify-between shrink-0">
-                  <span className="font-bold text-gray-800 text-sm">详情</span>
-                  <button onClick={() => setPreviewItem(null)} className="text-gray-400 hover:text-gray-600"><X size={16}/></button>
+          <div className="w-80 h-full bg-stone-50 border-l border-stone-200 flex flex-col animate-in slide-in-from-right duration-200 z-10 shrink-0">
+              <div className="p-4 border-b border-stone-200 bg-white flex items-center justify-between shrink-0">
+                  <span className="font-bold text-stone-900 text-sm">详情</span>
+                  <button onClick={() => setPreviewItem(null)} className="text-stone-400 hover:text-stone-900 transition-colors"><X size={16}/></button>
               </div>
               <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
-                   {/* Header Info */}
                    <div className="flex flex-col items-center text-center">
-                        <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600 mb-3">
+                        <div className="w-16 h-16 bg-white rounded-md shadow-sm border border-stone-200 flex items-center justify-center text-stone-600 mb-3">
                             <Icon size={32} />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 leading-tight px-2">{mockInfo.title}</h3>
-                        <p className="text-xs text-gray-500 mt-1">{mockInfo.author}</p>
+                        <h3 className="text-lg font-bold text-stone-900 leading-tight px-2">{mockInfo.title}</h3>
+                        <p className="text-xs text-stone-500 mt-1">{mockInfo.author}</p>
                    </div>
                    
-                   {/* Action */}
                    <button 
                       onClick={() => { toggleFunc(previewItem); }}
-                      className={`w-full py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm ${isSelected ? 'bg-gray-200 text-gray-600 hover:bg-gray-300' : 'bg-[#55635C] text-white hover:bg-[#444F49]'}`}
+                      className={`w-full py-2.5 rounded-md text-xs font-bold transition-all shadow-sm ${isSelected ? 'bg-stone-200 text-stone-600 hover:bg-stone-300' : 'bg-sage-500 text-white hover:bg-sage-600'}`}
                    >
                       {isSelected ? '移除此项' : '添加此项'}
                    </button>
   
-                   {/* Description */}
                    <div>
-                       <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">简介</h4>
-                       <p className="text-xs text-gray-600 leading-relaxed bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                       <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">简介</h4>
+                       <p className="text-xs text-stone-600 leading-relaxed bg-white p-3 rounded-md border border-stone-200 shadow-sm">
                           {mockInfo.description || "暂无详细描述。该项功能可以帮助您完成特定的任务，提高工作效率。"}
                        </p>
                    </div>
   
-                   {/* Meta Info Grid */}
                    <div className="grid grid-cols-2 gap-3">
-                       <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                           <div className="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><GitBranch size={10}/> 版本</div>
-                           <div className="text-xs font-medium text-gray-800">{mockInfo.version}</div>
+                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-sm">
+                           <div className="text-[10px] text-stone-400 mb-1 flex items-center gap-1 uppercase font-bold">Version</div>
+                           <div className="text-xs font-medium text-stone-900">{mockInfo.version}</div>
                        </div>
-                       <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                           <div className="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><Clock size={10}/> 更新时间</div>
-                           <div className="text-xs font-medium text-gray-800">{mockInfo.updated}</div>
-                       </div>
-                       <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                           <div className="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><Download size={10}/> 使用量</div>
-                           <div className="text-xs font-medium text-gray-800">{mockInfo.downloads}</div>
-                       </div>
-                       <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                           <div className="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><Star size={10}/> 评分</div>
-                           <div className="text-xs font-medium text-gray-800">4.9/5.0</div>
+                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-sm">
+                           <div className="text-[10px] text-stone-400 mb-1 flex items-center gap-1 uppercase font-bold">Updated</div>
+                           <div className="text-xs font-medium text-stone-900">{mockInfo.updated}</div>
                        </div>
                    </div>
-                   
-                   {/* Capabilities / API (Mock) */}
-                   <div>
-                       <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">能力范畴</h4>
-                       <div className="flex flex-wrap gap-2">
-                           {['文本处理', '数据分析', '格式转换'].map(tag => (
-                               <span key={tag} className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-[10px] border border-blue-100">{tag}</span>
-                           ))}
-                       </div>
-                   </div>
-  
               </div>
           </div>
       )
     }
 
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-xl shadow-2xl w-[900px] h-[600px] flex overflow-hidden animate-in zoom-in-95 duration-200">
-              {/* Sidebar */}
-              <div className="w-56 bg-gray-50 border-r border-gray-200 flex flex-col p-4 shrink-0">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/20 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-md shadow-2xl w-[900px] h-[600px] flex overflow-hidden animate-in zoom-in-95 duration-200 border border-stone-200">
+              <div className="w-56 bg-stone-50 border-r border-stone-200 flex flex-col p-4 shrink-0">
                   <button 
                       onClick={handleCreateClick}
-                      className="w-full flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-[#55635C] hover:text-[#55635C] transition-all shadow-sm mb-6 mt-1"
+                      className="w-full flex items-center gap-2 px-4 py-2.5 bg-white border border-stone-200 rounded-md text-sm font-semibold text-stone-700 hover:border-sage-500 hover:text-sage-700 transition-all shadow-sm mb-6 mt-1"
                   >
                       <Plus size={16} /> 创建{typeLabel}
                   </button>
 
-                  <div className="space-y-1 flex-1">
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-400">分类</div>
+                  <div className="space-y-0.5 flex-1">
+                      <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest">分类</div>
                       <button 
                           onClick={() => { setSelectorTab('official'); setIsCreating(false); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left ${!isCreating && selectorTab === 'official' ? 'bg-blue-50 text-brand-600 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all text-left ${!isCreating && selectorTab === 'official' ? 'bg-sage-50 text-sage-700 font-semibold shadow-sm border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
                       >
-                          <Library size={18} className={!isCreating && selectorTab === 'official' ? 'text-brand-600' : 'text-gray-400'} /> 
+                          <Library size={18} className={!isCreating && selectorTab === 'official' ? 'text-sage-600' : 'text-stone-400'} /> 
                           官方{typeLabel}
                       </button>
                       <button 
                           onClick={() => { setSelectorTab('mine'); setIsCreating(false); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left ${!isCreating && selectorTab === 'mine' ? 'bg-blue-50 text-brand-600 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all text-left ${!isCreating && selectorTab === 'mine' ? 'bg-sage-50 text-sage-700 font-semibold shadow-sm border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
                       >
-                          <LayoutGrid size={18} className={!isCreating && selectorTab === 'mine' ? 'text-brand-600' : 'text-gray-400'} /> 
+                          <LayoutGrid size={18} className={!isCreating && selectorTab === 'mine' ? 'text-sage-600' : 'text-stone-400'} /> 
                           我的{typeLabel}
                       </button>
                   </div>
               </div>
 
-              {/* Main Content Area (Flex Row) */}
               <div className="flex-1 flex min-w-0">
                   {isCreating ? (
-                         <div className="flex-1 flex flex-col">
-                             <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white flex-shrink-0">
-                                 <h3 className="text-sm font-bold text-gray-800">技能列表</h3>
-                                 <button onClick={() => setShowSelectorModal(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                         <div className="flex-1 flex flex-col bg-white">
+                             <div className="h-16 border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
+                                 <h3 className="text-sm font-bold text-stone-900">技能列表</h3>
+                                 <button onClick={() => setShowSelectorModal(null)} className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
                                      <X size={20} />
                                  </button>
                              </div>
-                             <div className="flex-1 p-8 flex items-center justify-center bg-white">
-                                 <div className="w-full h-full border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center bg-gray-50/50">
-                                     <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 flex items-center justify-center mb-6 shadow-sm">
-                                         <Plus size={32} className="text-gray-400" />
+                             <div className="flex-1 p-8 flex items-center justify-center">
+                                 <div className="w-full h-full border-2 border-dashed border-stone-200 rounded-md flex flex-col items-center justify-center bg-stone-50/50">
+                                     <div className="w-16 h-16 bg-white rounded-md border border-stone-200 flex items-center justify-center mb-6 shadow-sm">
+                                         <Plus size={32} className="text-stone-300" />
                                      </div>
-                                     <h3 className="text-gray-900 font-bold mb-8 text-lg">暂无我的技能</h3>
+                                     <h3 className="text-stone-900 font-bold mb-8 text-lg">暂无我的技能</h3>
                                      
                                      <input type="file" ref={toolFileInputRef} className="hidden" onChange={handleToolFileUpload} />
                                      
                                      <div className="flex gap-6">
                                          <button 
                                              onClick={() => toolFileInputRef.current?.click()}
-                                             className="px-8 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2"
+                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-sm flex items-center gap-2"
                                          >
                                              <Upload size={16}/> 本地上传
                                          </button>
                                          <button 
                                              onClick={handleAiDev}
-                                             className="px-8 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2"
+                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-sm flex items-center gap-2"
                                          >
                                              <Code size={16}/> AI 开发
                                          </button>
@@ -422,64 +386,59 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                          </div>
                     ) : (
                       <>
-                        {/* List Column */}
-                        <div className="flex-1 flex flex-col min-w-0">
-                              <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white flex-shrink-0">
-                                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                                      已选 <span className="font-bold text-[#55635C]">{selectedList.length}</span>/50
+                        <div className="flex-1 flex flex-col min-w-0 bg-white">
+                              <div className="h-16 border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
+                                  <div className="flex items-center gap-2 text-sm text-stone-500 font-medium">
+                                      已选择 <span className="font-bold text-sage-600">{selectedList.length}</span> / 50
                                   </div>
-                                  <button onClick={() => setShowSelectorModal(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                                  <button onClick={() => setShowSelectorModal(null)} className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
                                       <X size={20} />
                                   </button>
                               </div>
               
-                              <div className="flex-1 overflow-y-auto p-6 bg-white custom-scrollbar">
-                                  <div className="space-y-4">
-                                      {itemsToDisplay.map(item => {
-                                          const Icon = IconMap[item.icon] || Box;
-                                          const isSelected = selectedList.some(s => s.id === item.id);
-                                          const isPreviewing = previewItem?.id === item.id;
+                              <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                                  {itemsToDisplay.map(item => {
+                                      const Icon = IconMap[item.icon] || Box;
+                                      const isSelected = selectedList.some(s => s.id === item.id);
+                                      const isPreviewing = previewItem?.id === item.id;
               
-                                          return (
-                                              <div 
-                                                  key={item.id} 
-                                                  onClick={() => setPreviewItem(item)}
-                                                  className={`flex items-center justify-between p-4 rounded-xl border transition-all group cursor-pointer ${isPreviewing ? 'border-[#55635C] bg-gray-50 shadow-sm' : 'border-gray-100 hover:shadow-md hover:border-gray-200'}`}
-                                              >
-                                                  <div className="flex items-center gap-4 min-w-0">
-                                                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${isSelected ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-500'} group-hover:scale-105 transition-transform`}>
-                                                          <Icon size={24} />
-                                                      </div>
-                                                      <div className="min-w-0">
-                                                          <h4 className="font-bold text-gray-800 text-sm mb-1 truncate">{item.name}</h4>
-                                                          <p className="text-xs text-gray-500 truncate">{item.description}</p>
-                                                      </div>
+                                      return (
+                                          <div 
+                                              key={item.id} 
+                                              onClick={() => setPreviewItem(item)}
+                                              className={`flex items-center justify-between p-4 rounded-md border transition-all group cursor-pointer ${isPreviewing ? 'border-sage-500 bg-sage-50/30 shadow-sm' : 'border-stone-100 hover:shadow-md hover:border-stone-200 bg-white'}`}
+                                          >
+                                              <div className="flex items-center gap-4 min-w-0">
+                                                  <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isSelected ? 'bg-sage-50 text-sage-600 border border-sage-100' : 'bg-stone-50 text-stone-400 border border-stone-100'}`}>
+                                                      <Icon size={24} />
                                                   </div>
-                                                  
-                                                  <button 
-                                                      onClick={(e) => { e.stopPropagation(); toggleFunc(item); }}
-                                                      className={`ml-4 px-4 py-2 rounded-lg text-xs font-medium transition-all shrink-0 ${
-                                                          isSelected 
-                                                          ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' 
-                                                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#55635C] hover:text-[#55635C] shadow-sm'
-                                                      }`}
-                                                  >
-                                                      {isSelected ? '已添加' : '添加'}
-                                                  </button>
+                                                  <div className="min-w-0">
+                                                      <h4 className="font-bold text-stone-900 text-sm mb-0.5 truncate">{item.name}</h4>
+                                                      <p className="text-xs text-stone-500 truncate font-medium">{item.description}</p>
+                                                  </div>
                                               </div>
-                                          )
-                                      })}
-                                  </div>
+                                              
+                                              <button 
+                                                  onClick={(e) => { e.stopPropagation(); toggleFunc(item); }}
+                                                  className={`ml-4 px-4 py-2 rounded-md text-xs font-bold transition-all shrink-0 ${
+                                                      isSelected 
+                                                      ? 'bg-stone-100 text-stone-400 shadow-inner' 
+                                                      : 'bg-white border border-stone-200 text-stone-700 hover:border-sage-500 hover:text-sage-600 shadow-sm'
+                                                  }`}
+                                              >
+                                                  {isSelected ? '已添加' : '添加'}
+                                              </button>
+                                          </div>
+                                      )
+                                  })}
                               </div>
                               
-                              <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end shrink-0">
-                                  <button className="flex items-center gap-1 text-xs text-blue-600 hover:underline">
+                              <div className="p-4 border-t border-stone-200 bg-stone-50 flex justify-end shrink-0">
+                                  <button className="flex items-center gap-1.5 text-xs text-sage-600 font-bold hover:text-sage-800 transition-colors">
                                       <Store size={14} /> 前往资产市场发现更多{typeLabel}
                                   </button>
                               </div>
                         </div>
-
-                        {/* Details Panel */}
                         {renderDetailPanel()}
                       </>
                     )}
@@ -490,8 +449,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
   }
 
   const isCentered = mode === 'centered';
-  
-  // Default placeholders
   const defaultPlaceholder = isCentered 
      ? "分配任务或向我咨询任何问题吧~" 
      : "输入消息... 使用 '/' 输入指令, '@' 引用知识库";
@@ -501,96 +458,85 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
       <div 
         className={`relative bg-white transition-all duration-300
         ${isCentered 
-            ? 'rounded-2xl border-[6px] border-[#F2F1EF]/50 shadow-sm' 
-            : 'rounded-xl border border-gray-200 shadow-lg'
+            ? 'rounded-md border border-stone-200 shadow-sm' 
+            : 'rounded-md border border-stone-200 shadow-lg'
         }`}
       >
-        <div className={`${isCentered ? 'bg-white rounded-xl border border-gray-100' : ''}`}>
-            {/* Text Area */}
+        <div className="bg-white rounded-md">
             <textarea
             ref={textareaRef}
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder={placeholder || defaultPlaceholder}
-            className={`w-full outline-none resize-none text-gray-700 bg-transparent custom-scrollbar block
-                ${isCentered ? 'p-6 text-base' : 'p-3 text-sm'}
+            className={`w-full outline-none resize-none text-stone-900 bg-transparent custom-scrollbar block placeholder:text-stone-300 leading-relaxed
+                ${isCentered ? 'p-6 text-base' : 'p-4 text-sm'}
             `}
             style={{ minHeight: isCentered ? '140px' : '44px' }}
             disabled={disabled}
             />
 
-            {/* Popover Menus */}
-            {/* @ Menu */}
             {showAtMenu && (
-                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                    <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 bg-gray-50/50 uppercase tracking-wider">知识库</div>
+                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 bg-stone-50/50 uppercase tracking-widest border-b border-stone-100 mb-1">知识库</div>
                     {MOCK_DOCS.map(doc => (
-                        <div key={doc.id} onClick={() => insertText(`@${doc.title}`, '@')} className="px-3 py-2 hover:bg-gray-50 text-sm cursor-pointer flex items-center gap-2 text-gray-700">
-                            <Paperclip size={14} className="text-gray-400"/> {doc.title}
+                        <div key={doc.id} onClick={() => insertText(`@${doc.title}`, '@')} className="px-3 py-2 hover:bg-stone-50 text-sm cursor-pointer flex items-center gap-2 text-stone-700">
+                            <Paperclip size={14} className="text-stone-300"/> {doc.title}
                         </div>
                     ))}
-                    <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 bg-gray-50/50 uppercase tracking-wider mt-1">智能体</div>
-                    {MOCK_AGENTS.map(agent => (
-                         <div key={agent.id} onClick={() => insertText(`@${agent.name}`, '@')} className="px-3 py-2 hover:bg-gray-50 text-sm cursor-pointer flex items-center gap-2 text-gray-700">
-                            <Bot size={14} className="text-gray-400"/> {agent.name}
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 bg-stone-50/50 uppercase tracking-widest border-b border-stone-100 my-1">智能体</div>
+                    {MOCK_AGENTS.slice(0, 3).map(agent => (
+                         <div key={agent.id} onClick={() => insertText(`@${agent.name}`, '@')} className="px-3 py-2 hover:bg-stone-50 text-sm cursor-pointer flex items-center gap-2 text-stone-700">
+                            <Bot size={14} className="text-stone-300"/> {agent.name}
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Slash Menu */}
             {showSlashMenu && (
-                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                     <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 bg-gray-50/50 uppercase tracking-wider">快捷指令</div>
+                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                     <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 bg-stone-50/50 uppercase tracking-widest border-b border-stone-100 mb-1">快捷指令</div>
                      {SLASH_COMMANDS.map(cmd => (
-                        <div key={cmd.id} onClick={() => insertText(cmd.label, '/')} className="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-3 group">
-                            <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-[#55635C] transition-colors border border-transparent group-hover:border-gray-200">
+                        <div key={cmd.id} onClick={() => insertText(cmd.label, '/')} className="px-3 py-2 hover:bg-stone-50 cursor-pointer flex items-center gap-3 group">
+                            <div className="w-8 h-8 rounded bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-white group-hover:text-sage-600 transition-colors border border-transparent group-hover:border-stone-200">
                                 <cmd.icon size={14} />
                             </div>
                             <div>
-                                <div className="text-sm font-medium text-gray-700">{cmd.label}</div>
-                                <div className="text-xs text-gray-400">{cmd.desc}</div>
+                                <div className="text-sm font-semibold text-stone-900">{cmd.label}</div>
+                                <div className="text-[11px] text-stone-500">{cmd.desc}</div>
                             </div>
                         </div>
                      ))}
                 </div>
             )}
 
-            {/* Bottom Toolbar */}
-            <div className={`flex justify-between items-center ${isCentered ? 'px-4 py-3' : 'px-2 py-2'}`}>
-                <div className="flex items-center gap-2">
-                    {/* File Input (Hidden) */}
+            <div className={`flex justify-between items-center bg-stone-50/50 border-t border-stone-100 transition-colors ${isCentered ? 'px-4 py-3' : 'px-3 py-2'}`}>
+                <div className="flex items-center gap-1">
                     <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} multiple />
                     
-                    {/* Plus Button - Now handles Uploads */}
                     <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className={`flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all mr-1
-                            ${isCentered 
-                                ? 'w-8 h-8 rounded-full border border-gray-200 shadow-sm' 
-                                : 'w-8 h-8 rounded-lg'
-                            }`}
+                        className={`flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-stone-200/50 transition-all rounded-md
+                            ${isCentered ? 'w-8 h-8' : 'w-7 h-7'}`}
                         title="上传文件"
                     >
-                        <Plus size={isCentered ? 16 : 18} />
+                        <Plus size={18} />
                     </button>
                     
                     {!disableConfig && (
                         <>
-                            {/* Model Selector */}
                             <div className="relative" ref={modelMenuRef}>
                                 <button 
                                     onClick={() => setShowModelMenu(!showModelMenu)}
-                                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium text-gray-600 transition-colors border border-transparent hover:border-gray-200 ${showModelMenu ? 'bg-gray-100' : ''}`}
+                                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-stone-200/50 cursor-pointer text-xs font-bold text-stone-600 transition-all border border-transparent hover:border-stone-200 ${showModelMenu ? 'bg-stone-200/50 border-stone-200' : ''}`}
                                 >
-                                <Zap size={14} className="text-[#55635C]"/>
+                                <Zap size={14} className="text-sage-500"/>
                                 <span>{selectedModel.name}</span>
-                                <ChevronDown size={12} className="text-gray-400"/>
+                                <ChevronDown size={12} className="text-stone-300"/>
                                 </button>
 
                                 {showModelMenu && (
-                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-30 py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100 max-h-[300px] overflow-y-auto custom-scrollbar">
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[110] py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100 max-h-[300px] overflow-y-auto custom-scrollbar">
                                         {MODELS.map(model => (
                                             <button
                                                 key={model.id}
@@ -598,20 +544,18 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                                     setSelectedModel(model);
                                                     setShowModelMenu(false);
                                                 }}
-                                                className="text-left px-4 py-3 text-xs hover:bg-gray-50 flex flex-col gap-1.5 border-b border-gray-50 last:border-0 w-full transition-colors group"
+                                                className="text-left px-4 py-3 text-xs hover:bg-stone-50 flex flex-col gap-1.5 border-b border-stone-50 last:border-0 w-full transition-colors group"
                                             >
                                                 <div className="flex items-center justify-between w-full">
-                                                    <span className={`font-medium text-sm ${selectedModel.id === model.id ? 'text-[#55635C]' : 'text-gray-700'}`}>{model.name}</span>
-                                                    {selectedModel.id === model.id && <Check size={14} className="text-[#55635C]"/>}
+                                                    <span className={`font-bold text-sm ${selectedModel.id === model.id ? 'text-sage-600' : 'text-stone-700'}`}>{model.name}</span>
+                                                    {selectedModel.id === model.id && <Check size={14} className="text-sage-500"/>}
                                                 </div>
                                                 <div className="flex gap-1.5 flex-wrap">
                                                     {model.tags.map(tag => (
-                                                        <span key={tag} className={`px-1.5 py-0.5 rounded text-[10px] border ${
-                                                            tag === '外部模型' 
-                                                                ? 'bg-orange-50 text-orange-600 border-orange-100' 
-                                                                : tag.includes('模态') 
-                                                                    ? 'bg-blue-50 text-blue-600 border-blue-100'
-                                                                    : 'bg-gray-100 text-gray-500 border-gray-200'
+                                                        <span key={tag} className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold border ${
+                                                            tag === '官方推荐' 
+                                                                ? 'bg-sage-50 text-sage-600 border-sage-100' 
+                                                                : 'bg-stone-50 text-stone-400 border-stone-100'
                                                         }`}>
                                                             {tag}
                                                         </span>
@@ -623,20 +567,18 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                 )}
                             </div>
 
-                            <div className="h-4 w-px bg-gray-200 mx-1"></div>
+                            <div className="h-4 w-px bg-stone-200 mx-1"></div>
 
-                            {/* Search Toggle */}
                             <div 
-                                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none font-medium ${webSearch ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
+                                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all select-none font-bold ${webSearch ? 'bg-sage-50 text-sage-600 shadow-sm border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
                                 onClick={() => setWebSearch(!webSearch)}
                             >
                                 <Globe size={14} />
                                 <span className="hidden sm:inline">联网</span>
                             </div>
 
-                            {/* Skills Toggle (Opens Modal) */}
                             <div 
-                                className={`tool-trigger flex items-center gap-1.5 px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none font-medium ${activeSkills.length > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
+                                className={`tool-trigger flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all select-none font-bold ${activeSkills.length > 0 ? 'bg-sage-50 text-sage-600 shadow-sm border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
                                 onClick={() => {
                                     setShowSelectorModal('skills');
                                     setSelectorTab('official');
@@ -644,38 +586,18 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                             >
                                 <Puzzle size={14} />
                                 <span className="hidden sm:inline">技能</span>
-                                {activeSkills.length > 0 && <span className="bg-blue-100 text-blue-700 px-1 rounded-full text-[10px]">{activeSkills.length}</span>}
-                            </div>
-
-                            {/* MCP Toggle (Opens Modal) */}
-                            <div 
-                                className={`tool-trigger flex items-center gap-1.5 px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors select-none font-medium ${activeMcps.length > 0 ? 'bg-purple-50 text-purple-600' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
-                                onClick={() => {
-                                    setShowSelectorModal('mcp');
-                                    setSelectorTab('official');
-                                }}
-                            >
-                                <Server size={14} />
-                                <span className="hidden sm:inline">MCP</span>
-                                {activeMcps.length > 0 && <span className="bg-purple-100 text-purple-700 px-1 rounded-full text-[10px]">{activeMcps.length}</span>}
+                                {activeSkills.length > 0 && <span className="bg-sage-100 text-sage-700 px-1.5 rounded-full text-[10px]">{activeSkills.length}</span>}
                             </div>
                         </>
                     )}
                 </div>
                 
                 <div className="flex items-center gap-1">
-                    {!isCentered && (
-                        <>
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg hidden sm:block"><Command size={18} /></button>
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg hidden sm:block"><AtSign size={18} /></button>
-                        </>
-                    )}
-
                     <button 
                         onClick={handleSend}
                         disabled={!input.trim() || disabled}
-                        className={`w-9 h-9 rounded-lg transition-all flex items-center justify-center ml-1
-                            ${input.trim() && !disabled ? 'bg-[#55635C] text-white hover:bg-[#444F49] shadow-md' : 'bg-[#F2F1EF] text-white'}
+                        className={`w-8 h-8 rounded-md transition-all flex items-center justify-center ml-1
+                            ${input.trim() && !disabled ? 'bg-sage-500 text-white hover:bg-sage-600 shadow-sm active:scale-95' : 'bg-stone-200 text-stone-400'}
                         `}
                     >
                         <ArrowUp size={18} />
@@ -684,21 +606,20 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
             </div>
         </div>
 
-        {/* Recommended Actions (Chips) - Displayed below input area */}
         {isCentered && (
-            <div className="flex gap-3 mt-3 px-2">
+            <div className="flex gap-2 mt-4 px-1">
                 <button 
                     onClick={() => setInput(prev => prev + '我想构建一个智能体 ')}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all shadow-sm active:translate-y-px"
                 >
-                    <Box size={12} className="text-[#55635C]"/>
+                    <Box size={14} className="text-sage-500"/>
                     构建智能体
                 </button>
                 <button 
                     onClick={() => setInput(prev => prev + '生成 UI 界面 ')}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all shadow-sm active:translate-y-px"
                 >
-                    <Palette size={12} className="text-[#55635C]"/>
+                    <Palette size={14} className="text-sage-500"/>
                     生成 UI
                 </button>
             </div>

@@ -30,7 +30,7 @@ import {
   Search,
   Database,
   Calculator,
-  Image as ImageIcon,
+  ImageIcon,
   Layout,
   Home,
   Tags,
@@ -95,7 +95,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
   const [chatMenuStep, setChatMenuStep] = useState<'main' | 'groups'>('main');
 
-  // Logic: AgentBuilder view also counts as AgentCenter context for sidebar
   const isAgentCenterMode = currentView === ViewState.AGENT_CENTER || currentView === ViewState.AGENT_BUILDER;
   const isGenerationCenterMode = currentView === ViewState.GENERATION_CENTER;
   const isMemoryCenterMode = currentView === ViewState.MEMORY_CENTER;
@@ -236,24 +235,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const capabilityItems = [
-    { view: ViewState.AGENT_CENTER, label: '智能体中心', icon: Bot, color: 'text-blue-500' },
-    { view: ViewState.MEMORY_CENTER, label: '记忆中心', icon: BrainCircuit, color: 'text-purple-500' },
-    { view: ViewState.GENERATION_CENTER, label: '生成中心', icon: Zap, color: 'text-yellow-500' },
-    { view: ViewState.EVALUATION_CENTER, label: '评测中心', icon: TestTube, color: 'text-red-500' },
-    { view: ViewState.ASSET_MARKET, label: '资产市场', icon: Store, color: 'text-gray-400', divider: true },
-    { view: ViewState.ALGORITHM_SERVICE, label: '算法服务', icon: Code2, color: 'text-gray-400' },
-    { view: ViewState.LABORATORY, label: '实验室', icon: FlaskConical, color: 'text-gray-400' },
+    { view: ViewState.AGENT_CENTER, label: '智能体中心', icon: Bot, color: 'text-sage-500' },
+    { view: ViewState.MEMORY_CENTER, label: '记忆中心', icon: BrainCircuit, color: 'text-sage-500' },
+    { view: ViewState.GENERATION_CENTER, label: '生成中心', icon: Zap, color: 'text-sage-500' },
+    { view: ViewState.EVALUATION_CENTER, label: '评测中心', icon: TestTube, color: 'text-sage-500' },
+    { view: ViewState.ASSET_MARKET, label: '资产市场', icon: Store, color: 'text-stone-400', divider: true },
+    { view: ViewState.ALGORITHM_SERVICE, label: '算法服务', icon: Code2, color: 'text-stone-400' },
+    { view: ViewState.LABORATORY, label: '实验室', icon: FlaskConical, color: 'text-stone-400' },
   ];
 
   const isCapabilityActive = capabilityItems.some(item => item.view === currentView);
 
   const renderCapabilityMenu = () => (
-     <div className="bg-white shadow-xl border border-gray-100 rounded-lg py-2 w-56">
+     <div className="bg-white shadow-lg border border-stone-200 rounded-md py-2 w-56">
         {capabilityItems.map((item) => (
             <React.Fragment key={item.view}>
-                {item.divider && <div className="border-t border-gray-100 my-1"></div>}
+                {item.divider && <div className="border-t border-stone-100 my-1"></div>}
                 <div 
-                    className={`px-4 py-2 hover:bg-gray-50 flex items-center gap-3 text-sm cursor-pointer transition-colors ${currentView === item.view ? 'bg-blue-50/50 text-blue-700' : 'text-gray-700'}`}
+                    className={`px-4 py-2 hover:bg-stone-50 flex items-center gap-3 text-sm cursor-pointer transition-colors ${currentView === item.view ? 'bg-sage-50 text-sage-700' : 'text-stone-600'}`}
                     onClick={(e) => {
                         e.stopPropagation();
                         onChangeView(item.view);
@@ -271,40 +270,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const renderAgentCenterSidebar = () => (
     <div className="flex-1 flex flex-col pt-2">
         <div className="px-4 mb-6">
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer group transition-colors">
+            <div className="flex items-center justify-between p-2 rounded-md hover:bg-stone-100 cursor-pointer group transition-colors border border-transparent hover:border-stone-200 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
+                    <div className="w-8 h-8 rounded bg-stone-200 flex items-center justify-center text-stone-600 shadow-inner">
                         <Users size={16} />
                     </div>
-                    <span className="text-sm font-medium text-gray-700">崇启的空间</span>
+                    <span className="text-sm font-medium text-stone-900">崇启的空间</span>
                 </div>
-                <ArrowRightLeft size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ArrowRightLeft size={14} className="text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
         </div>
 
         <div className="px-2 space-y-1">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">研发管理</div>
+            <div className="px-3 py-2 text-[11px] font-semibold text-stone-400 uppercase tracking-widest">研发管理</div>
             <button 
                 onClick={() => onChangeView(ViewState.AGENT_CENTER)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors font-medium ${isAgentCenterMode ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all font-medium ${isAgentCenterMode ? 'bg-sage-50 text-sage-700 shadow-sm border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
             >
-                <Bot size={18} className={isAgentCenterMode ? 'text-gray-800' : 'text-gray-500'} />
+                <Bot size={18} className={isAgentCenterMode ? 'text-sage-600' : 'text-stone-400'} />
                 智能体
             </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors">
-                <MessageSquare size={18} className="text-gray-500" />
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-stone-600 hover:bg-stone-100 transition-colors">
+                <MessageSquare size={18} className="text-stone-400" />
                 提示词
             </button>
         </div>
 
         <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">空间信息</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Users size={18} className="text-gray-500" />
+            <div className="px-3 py-2 text-[11px] font-semibold text-stone-400 uppercase tracking-widest">空间信息</div>
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-stone-600 hover:bg-stone-100 transition-colors">
+                <Users size={18} className="text-stone-400" />
                 空间成员
             </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Settings size={18} className="text-gray-500" />
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-stone-600 hover:bg-stone-100 transition-colors">
+                <Settings size={18} className="text-stone-400" />
                 空间配置
             </button>
         </div>
@@ -312,278 +311,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex-1"></div>
 
         <div className="px-2 space-y-1 pb-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <HelpCircle size={18} className="text-gray-500" />
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-stone-500 hover:bg-stone-100 transition-colors">
+                <HelpCircle size={18} />
                 帮助文档
             </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <AlertTriangle size={18} className="text-gray-500" />
-                需求缺陷
-            </button>
-        </div>
-    </div>
-  );
-
-  const renderGenerationCenterSidebar = () => (
-    <div className="flex-1 flex flex-col pt-2 overflow-y-auto custom-scrollbar">
-        <div className="px-4 mb-6">
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer group transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
-                        <Users size={16} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">崇启的空间</span>
-                </div>
-                <ArrowRightLeft size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-        </div>
-
-        <div className="px-2 space-y-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm bg-gray-200 text-gray-900 font-medium">
-                <Home size={18} className="text-gray-800" />
-                首页
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Layout size={18} className="text-gray-500" />
-                UI 资产
-            </button>
-        </div>
-
-        <div className="px-2 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">提示词</div>
-            <div className="px-3 mb-2">
-                <div className="relative">
-                    <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input className="w-full pl-8 pr-2 py-1.5 bg-gray-100 border-none rounded-lg text-xs focus:ring-1 focus:ring-gray-300 outline-none" placeholder="搜索项目" />
-                </div>
-            </div>
-            <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
-                {['01', '02', '03', '04', '05'].map(num => (
-                    <button key={num} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 truncate text-left">
-                        <MessageSquare size={16} className="text-gray-400 shrink-0" />
-                        <span className="truncate">提示词名称 {num}</span>
-                    </button>
-                ))}
-            </div>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">辅助材料</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Database size={18} className="text-gray-500" />
-                数据集
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Calculator size={18} className="text-gray-500" />
-                评估器
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <ImageIcon size={18} className="text-gray-500" />
-                素材管理
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <FileText size={18} className="text-gray-500" />
-                提示词模板
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">空间信息</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Users size={18} className="text-gray-500" />
-                空间成员
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Settings size={18} className="text-gray-500" />
-                空间配置
-            </button>
-        </div>
-        
-        <div className="flex-1 mt-10"></div>
-
-        <div className="px-2 space-y-1 pb-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <HelpCircle size={18} className="text-gray-500" />
-                帮助文档
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <AlertTriangle size={18} className="text-gray-500" />
-                需求缺陷
-            </button>
-        </div>
-    </div>
-  );
-
-  const renderMemoryCenterSidebar = () => (
-    <div className="flex-1 flex flex-col pt-2 overflow-y-auto custom-scrollbar">
-        <div className="px-4 mb-6">
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer group transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
-                        <Users size={16} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">崇启的空间</span>
-                </div>
-                <ArrowRightLeft size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-        </div>
-
-        <div className="px-2 space-y-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm bg-gray-200 text-gray-900 font-medium">
-                <Home size={18} className="text-gray-800" />
-                首页
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">知识管理</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <BookOpen size={18} className="text-gray-500" />
-                知识库
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Tags size={18} className="text-gray-500" />
-                标签
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <BarChart3 size={18} className="text-gray-500" />
-                数据报表
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">空间信息</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Users size={18} className="text-gray-500" />
-                空间成员
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Settings size={18} className="text-gray-500" />
-                空间配置
-            </button>
-        </div>
-        
-        <div className="flex-1 mt-20"></div>
-
-        <div className="px-2 space-y-1 pb-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <HelpCircle size={18} className="text-gray-500" />
-                帮助文档
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <AlertTriangle size={18} className="text-gray-500" />
-                需求缺陷
-            </button>
-        </div>
-    </div>
-  );
-
-  const renderEvaluationCenterSidebar = () => (
-    <div className="flex-1 flex flex-col pt-2 overflow-y-auto custom-scrollbar">
-        <div className="px-4 mb-6">
-            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer group transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
-                        <Users size={16} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">崇启的空间</span>
-                </div>
-                <ArrowRightLeft size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-        </div>
-
-        <div className="px-2 space-y-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm bg-gray-200 text-gray-900 font-medium">
-                <Home size={18} className="text-gray-800" />
-                首页
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">评测</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Files size={18} className="text-gray-500" />
-                评测集
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Lightbulb size={18} className="text-gray-500" />
-                评估器
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Beaker size={18} className="text-gray-500" />
-                评测实验
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">观测</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Activity size={18} className="text-gray-500" />
-                Trace
-            </button>
-        </div>
-
-        <div className="px-2 space-y-1 mt-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">空间信息</div>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Users size={18} className="text-gray-500" />
-                空间成员
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Settings size={18} className="text-gray-500" />
-                空间配置
-            </button>
-        </div>
-        
-        <div className="flex-1 mt-10"></div>
-
-        <div className="px-2 space-y-1 pb-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <HelpCircle size={18} className="text-gray-500" />
-                帮助文档
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <AlertTriangle size={18} className="text-gray-500" />
-                需求缺陷
-            </button>
-        </div>
-    </div>
-  );
-
-  const renderAssetMarketSidebar = () => (
-    <div className="flex-1 flex flex-col pt-2 overflow-y-auto custom-scrollbar">
-        <div className="px-2 space-y-1 mt-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Layers size={18} className="text-gray-500" />
-                智能体市场
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm bg-gray-200 text-gray-900 font-medium">
-                <Puzzle size={18} className="text-gray-800" />
-                Skill 市场
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Server size={18} className="text-gray-500" />
-                MCP 市场
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Lightbulb size={18} className="text-gray-500" />
-                评估器市场
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <Database size={18} className="text-gray-500" />
-                数据集市场
-            </button>
-        </div>
-        
-        <div className="flex-1 mt-20"></div>
-
-        <div className="px-2 space-y-1 pb-4">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <HelpCircle size={18} className="text-gray-500" />
-                帮助文档
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-                <AlertTriangle size={18} className="text-gray-500" />
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-stone-500 hover:bg-stone-100 transition-colors">
+                <AlertTriangle size={18} />
                 需求缺陷
             </button>
         </div>
@@ -595,7 +328,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="px-4 mb-4">
           <button 
             onClick={onNewChat}
-            className="w-full flex items-center space-x-3 px-4 py-2.5 bg-[#55635C] text-white hover:bg-[#444F49] rounded-lg transition-colors shadow-sm"
+            className="w-full flex items-center space-x-3 px-4 py-2.5 bg-sage-500 text-white hover:bg-sage-600 rounded-md transition-all shadow-sm active:scale-[0.98]"
           >
             <Plus size={18} />
             <span className="font-medium text-sm">新对话</span>
@@ -605,9 +338,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="px-2">
             <button 
                 onClick={() => onChangeView(ViewState.KNOWLEDGE_BASE)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left ${currentView === ViewState.KNOWLEDGE_BASE ? 'bg-gray-200 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all text-left ${currentView === ViewState.KNOWLEDGE_BASE ? 'bg-sage-50 text-sage-700 font-medium shadow-sm' : 'text-stone-600 hover:bg-stone-100'}`}
             >
-                <BookOpen size={18} className={currentView === ViewState.KNOWLEDGE_BASE ? 'text-gray-800' : 'text-gray-500'} />
+                <BookOpen size={18} className={currentView === ViewState.KNOWLEDGE_BASE ? 'text-sage-600' : 'text-stone-400'} />
                 我的知识库
             </button>
         </div>
@@ -615,9 +348,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="px-2 mt-1">
             <button 
                 onClick={() => onChangeView(ViewState.MY_CONTENT)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-left ${currentView === ViewState.MY_CONTENT ? 'bg-gray-200 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all text-left ${currentView === ViewState.MY_CONTENT ? 'bg-sage-50 text-sage-700 font-medium shadow-sm' : 'text-stone-600 hover:bg-stone-100'}`}
             >
-                <LayoutGrid size={18} className={currentView === ViewState.MY_CONTENT ? 'text-gray-800' : 'text-gray-500'} />
+                <LayoutGrid size={18} className={currentView === ViewState.MY_CONTENT ? 'text-sage-600' : 'text-stone-400'} />
                 我的内容
             </button>
         </div>
@@ -627,34 +360,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ref={capabilityButtonRef}
                 onMouseEnter={handleCapabilityEnter}
                 onMouseLeave={handleCapabilityLeave}
-                className={`w-full flex items-center justify-between py-2 rounded-lg -mx-2 px-2 transition-colors ${isCapabilityActive || showCapabilityMenu ? 'bg-white text-blue-600 border border-blue-100 shadow-sm' : 'text-gray-600 hover:bg-gray-100 border border-transparent'}`}
+                className={`w-full flex items-center justify-between py-2 rounded-md -mx-2 px-2 transition-all ${isCapabilityActive || showCapabilityMenu ? 'bg-white text-sage-700 border border-stone-200 shadow-sm' : 'text-stone-600 hover:bg-stone-100 border border-transparent'}`}
              >
                 <div className="flex items-center gap-3">
-                    <MoreHorizontal size={16} className={isCapabilityActive || showCapabilityMenu ? 'text-blue-500' : 'text-gray-500'}/>
+                    <MoreHorizontal size={16} className={isCapabilityActive || showCapabilityMenu ? 'text-sage-600' : 'text-stone-400'}/>
                     <span className="text-sm font-medium">更多能力</span>
                 </div>
-                <ChevronRight size={14} className={isCapabilityActive || showCapabilityMenu ? 'text-blue-400' : 'text-gray-400'}/>
+                <ChevronRight size={14} className="text-stone-300"/>
              </button>
         </div>
 
-        <div className="border-t border-gray-200 my-4 mx-4"></div>
+        <div className="border-t border-stone-200 my-4 mx-4"></div>
 
         <div className="px-4">
            <div className="flex justify-between items-center mb-2 group">
-            <h3 className="text-xs font-semibold text-gray-400">分组</h3>
-            <button onClick={openCreateGroupModal} className="text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" title="新建分组">
+            <h3 className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">分组</h3>
+            <button onClick={openCreateGroupModal} className="text-stone-400 hover:text-stone-900 opacity-0 group-hover:opacity-100 transition-opacity" title="新建分组">
                 <Plus size={14} />
             </button>
            </div>
-           <div className="space-y-1">
+           <div className="space-y-0.5">
              {groups.map(group => (
                  <div 
                     key={group.id} 
                     onClick={() => onSelectGroup(group.id)}
-                    className="relative group flex items-center justify-between text-sm text-gray-600 hover:bg-gray-100 px-2 py-1.5 rounded cursor-pointer transition-colors"
+                    className="relative group flex items-center justify-between text-sm text-stone-600 hover:bg-stone-100 px-2 py-1.5 rounded-md cursor-pointer transition-colors"
                  >
                     <div className="flex items-center gap-2 overflow-hidden">
-                        <Folder size={14} className="text-gray-400 flex-shrink-0"/> 
+                        <Folder size={14} className="text-stone-400 flex-shrink-0"/> 
                         <span className="truncate">{group.name}</span>
                     </div>
                     
@@ -663,16 +396,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             e.stopPropagation();
                             setActiveGroupMenu(activeGroupMenu === group.id ? null : group.id);
                         }}
-                        className={`text-gray-400 hover:text-gray-600 p-0.5 rounded ${activeGroupMenu === group.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                        className={`text-stone-400 hover:text-stone-900 p-0.5 rounded ${activeGroupMenu === group.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
                     >
                         <MoreHorizontal size={14} />
                     </button>
 
                     {activeGroupMenu === group.id && (
-                        <div className="absolute right-0 top-8 w-24 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100">
+                        <div className="absolute right-0 top-8 w-24 bg-white border border-stone-200 rounded-md shadow-lg z-50 overflow-hidden py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100">
                             <button 
                                 onClick={(e) => openRenameGroupModal(group.id, group.name, e)}
-                                className="px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                                className="px-3 py-2 text-left text-xs hover:bg-stone-50 flex items-center gap-2 text-stone-700"
                             >
                                 <Pencil size={12}/> 重命名
                             </button>
@@ -686,20 +419,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     )}
                  </div>
              ))}
-             {groups.length === 0 && (
-                <div className="text-xs text-gray-400 italic px-2">暂无分组</div>
-             )}
            </div>
         </div>
 
         <div className="px-4 mt-6">
-            <h3 className="text-xs font-semibold text-gray-400 mb-2">最近对话</h3>
-            <div className="space-y-1 pb-4">
+            <h3 className="text-[11px] font-bold text-stone-400 mb-2 uppercase tracking-widest">最近对话</h3>
+            <div className="space-y-0.5 pb-4">
                 {recentChats.map(chat => (
                     <div 
                         key={chat.id} 
                         onClick={() => onSelectChat(chat.id)}
-                        className={`group relative flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer transition-colors ${selectedChatId === chat.id ? 'bg-gray-200 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+                        className={`group relative flex items-center justify-between px-2 py-2 rounded-md cursor-pointer transition-all ${selectedChatId === chat.id ? 'bg-stone-200 text-stone-900 font-medium shadow-sm border border-stone-300/20' : 'text-stone-600 hover:bg-stone-100'}`}
                     >
                         <span className="text-sm truncate max-w-[140px]">{chat.title}</span>
                         
@@ -713,13 +443,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     setChatMenuStep('main');
                                 }
                             }}
-                            className={`text-gray-400 hover:text-gray-600 p-0.5 rounded ${activeChatMenu === chat.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                            className={`text-stone-400 hover:text-stone-900 p-0.5 rounded ${activeChatMenu === chat.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
                         >
-                            <MoreHorizontal size={14} className="" />
+                            <MoreHorizontal size={14} />
                         </button>
 
                         {activeChatMenu === chat.id && (
-                            <div className="absolute right-0 top-8 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100">
+                            <div className="absolute right-0 top-8 w-32 bg-white border border-stone-200 rounded-md shadow-lg z-50 overflow-hidden py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100">
                                 {chatMenuStep === 'main' ? (
                                     <>
                                         <button 
@@ -727,13 +457,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                                 e.stopPropagation();
                                                 setChatMenuStep('groups');
                                             }}
-                                            className="px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-2 text-gray-700 w-full"
+                                            className="px-3 py-2 text-left text-xs hover:bg-stone-50 flex items-center gap-2 text-gray-700 w-full"
                                         >
                                             <FolderPlus size={12}/> 添加到分组
                                         </button>
                                         <button 
                                             onClick={(e) => openRenameChatModal(chat.id, chat.title, e)}
-                                            className="px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-2 text-gray-700 w-full"
+                                            className="px-3 py-2 text-left text-xs hover:bg-stone-50 flex items-center gap-2 text-gray-700 w-full"
                                         >
                                             <Pencil size={12}/> 重命名
                                         </button>
@@ -746,22 +476,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     </>
                                 ) : (
                                     <>
-                                         <div className="px-3 py-1.5 text-[10px] text-gray-400 font-semibold border-b border-gray-100 mb-1 flex justify-between items-center">
+                                         <div className="px-3 py-1.5 text-[10px] text-stone-400 font-bold border-b border-stone-100 mb-1 flex justify-between items-center uppercase tracking-widest">
                                             选择分组
-                                            <span onClick={(e) => {e.stopPropagation(); setChatMenuStep('main')}} className="cursor-pointer hover:text-gray-600">←</span>
+                                            <span onClick={(e) => {e.stopPropagation(); setChatMenuStep('main')}} className="cursor-pointer hover:text-stone-900 transition-colors">←</span>
                                          </div>
                                          <div className="max-h-32 overflow-y-auto custom-scrollbar">
-                                            {groups.length > 0 ? groups.map(g => (
+                                            {groups.map(g => (
                                                 <button
                                                     key={g.id}
                                                     onClick={(e) => handleAddChatToGroup(chat.id, g.id, e)}
-                                                    className="px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-2 text-gray-700 w-full truncate"
+                                                    className="px-3 py-2 text-left text-xs hover:bg-stone-50 flex items-center gap-2 text-gray-700 w-full truncate"
                                                 >
-                                                    <Folder size={12} className="text-gray-400"/> {g.name}
+                                                    <Folder size={12} className="text-stone-400"/> {g.name}
                                                 </button>
-                                            )) : (
-                                                <div className="px-3 py-2 text-xs text-gray-400 text-center">无可用分组</div>
-                                            )}
+                                            ))}
                                          </div>
                                     </>
                                 )}
@@ -769,9 +497,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         )}
                     </div>
                 ))}
-                {recentChats.length === 0 && (
-                     <div className="text-xs text-gray-400 italic px-2">暂无最近对话</div>
-                )}
             </div>
         </div>
     </div>
@@ -783,16 +508,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   if (collapsed) {
     return (
-      <div className="w-16 h-full bg-[#FAFAFA] border-r border-gray-200 flex flex-col items-center py-4 space-y-6 transition-all duration-300 z-50">
-        <button onClick={() => setCollapsed(false)} className="p-2 hover:bg-gray-200 rounded-lg text-gray-500">
+      <div className="w-16 h-full bg-stone-50 border-r border-stone-200 flex flex-col items-center py-4 space-y-6 transition-all duration-300 z-50">
+        <button onClick={() => setCollapsed(false)} className="p-2 hover:bg-stone-200 rounded-md text-stone-400 hover:text-stone-900 transition-colors">
           <ChevronRight size={20} />
         </button>
-        <button onClick={onNewChat} className="p-2 bg-[#55635C] text-white rounded-lg hover:bg-[#444F49]" title="新对话">
+        <button onClick={onNewChat} className="p-2 bg-sage-500 text-white rounded-md hover:bg-sage-600 shadow-sm transition-all" title="新对话">
           <MessageSquarePlus size={20} />
         </button>
         
         <div className="relative group flex justify-center w-full">
-            <button className={`p-2 hover:bg-gray-200 rounded-lg ${isCapabilityActive ? 'text-blue-600 bg-blue-50' : 'text-gray-600'}`}>
+            <button className={`p-2 rounded-md transition-all ${isCapabilityActive ? 'text-sage-600 bg-sage-50 border border-sage-100 shadow-sm' : 'text-stone-400 hover:bg-stone-200'}`}>
                <MoreHorizontal size={20} />
             </button>
              <div className="hidden group-hover:block absolute left-full top-0 pl-2 z-50">
@@ -805,10 +530,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-    <div className="w-64 h-full bg-[#FAFAFA] border-r border-gray-200 flex flex-col transition-all duration-300 flex-shrink-0 font-sans z-50">
+    <div className="w-64 h-full bg-stone-50 border-r border-stone-200 flex flex-col transition-all duration-300 flex-shrink-0 font-sans z-50">
       <div className="p-4 flex justify-between items-center">
         <div className="flex items-center gap-2 group cursor-pointer" onClick={handleLogoClick}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform group-hover:scale-105 ${isSpecialMode ? 'bg-gray-100 text-gray-600' : 'bg-black text-white'}`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 ${isSpecialMode ? 'bg-sage-50 text-sage-600 shadow-sm border border-sage-100' : 'bg-sage-500 text-white shadow-sm'}`}>
                 {isAgentCenterMode ? <Bot size={16}/> 
                   : isGenerationCenterMode ? <Zap size={16}/> 
                   : isMemoryCenterMode ? <BrainCircuit size={16}/> 
@@ -816,10 +541,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : isAssetMarketMode ? <Store size={16}/>
                   : <Bot size={16}/>}
             </div>
-            <span className="font-bold text-lg text-gray-800 tracking-tight">卧虎</span>
-            {!isSpecialMode && <span className="text-[10px] bg-[#FFF3E0] text-[#FF9800] px-1.5 py-0.5 rounded font-bold">NEW</span>}
-            {isSpecialMode && <ChevronRight size={14} className="text-gray-400" />}
-            {isSpecialMode && <span className="text-sm font-medium text-gray-600 shrink-0">
+            <span className="font-bold text-lg text-stone-900 tracking-tight">卧虎</span>
+            {isSpecialMode && <ChevronRight size={14} className="text-stone-300" />}
+            {isSpecialMode && <span className="text-xs font-semibold text-stone-500 shrink-0 tracking-tight">
                 {isAgentCenterMode ? '智能体中心' 
                   : isGenerationCenterMode ? '生成中心' 
                   : isMemoryCenterMode ? '记忆中心'
@@ -827,44 +551,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : '资产市场'}
             </span>}
         </div>
-        <button onClick={() => setCollapsed(true)} className="p-1 hover:bg-gray-200 rounded text-gray-400">
+        <button onClick={() => setCollapsed(true)} className="p-1 hover:bg-stone-200 rounded text-stone-400 hover:text-stone-900 transition-colors">
           <ChevronLeft size={18} />
         </button>
       </div>
 
       {isAgentCenterMode ? renderAgentCenterSidebar() 
-        : isGenerationCenterMode ? renderGenerationCenterSidebar() 
-        : isMemoryCenterMode ? renderMemoryCenterSidebar()
-        : isEvaluationCenterMode ? renderEvaluationCenterSidebar()
-        : isAssetMarketMode ? renderAssetMarketSidebar()
-        : renderChatSidebar()}
+        : isGenerationCenterMode ? (
+            <div className="flex-1 flex flex-col pt-2 text-stone-400 items-center justify-center text-xs">生成中心 Sidebar</div>
+        ) : isMemoryCenterMode ? (
+            <div className="flex-1 flex flex-col pt-2 text-stone-400 items-center justify-center text-xs">记忆中心 Sidebar</div>
+        ) : isEvaluationCenterMode ? (
+            <div className="flex-1 flex flex-col pt-2 text-stone-400 items-center justify-center text-xs">评测中心 Sidebar</div>
+        ) : isAssetMarketMode ? (
+            <div className="flex-1 flex flex-col pt-2 text-stone-400 items-center justify-center text-xs">资产市场 Sidebar</div>
+        ) : renderChatSidebar()}
       
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded-lg cursor-pointer transition-colors">
-            <div className="w-8 h-8 rounded-full bg-[url('https://api.dicebear.com/9.x/avataaars/svg?seed=Felix')] bg-cover border border-gray-200"></div>
-            <div className="flex-1 overflow-hidden">
-                <div className="text-sm font-medium text-gray-700">崇启</div>
+      <div className="p-4 border-t border-stone-200">
+        <div className="flex items-center gap-3 hover:bg-stone-100 p-2 rounded-md cursor-pointer transition-colors border border-transparent hover:border-stone-200 group">
+            <div className="w-8 h-8 rounded-full bg-stone-200 border border-stone-300 shadow-inner flex items-center justify-center overflow-hidden">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="User" />
             </div>
-            <MoreHorizontal size={16} className="text-gray-400"/>
+            <div className="flex-1 overflow-hidden">
+                <div className="text-sm font-semibold text-stone-900 truncate">崇启</div>
+            </div>
+            <MoreHorizontal size={16} className="text-stone-400 group-hover:text-stone-900 transition-colors"/>
         </div>
       </div>
 
       {modalState.isOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-[2px] animate-in fade-in duration-200" onClick={closeModal}>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/20 backdrop-blur-[2px] animate-in fade-in duration-200" onClick={closeModal}>
             <div 
-                className="bg-white rounded-xl shadow-2xl w-80 p-5 transform transition-all scale-100 animate-in zoom-in-95 duration-200" 
+                className="bg-white rounded-md shadow-xl w-80 p-6 transform transition-all scale-100 animate-in zoom-in-95 duration-200 border border-stone-200" 
                 onClick={e => e.stopPropagation()}
             >
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-bold text-gray-800">{modalState.title}</h3>
-                    <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+                <div className="flex justify-between items-center mb-5">
+                    <h3 className="text-sm font-bold text-stone-900">{modalState.title}</h3>
+                    <button onClick={closeModal} className="text-stone-400 hover:text-stone-900 transition-colors">
                         <X size={16} />
                     </button>
                 </div>
                 
                 <input 
                     ref={inputRef}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#55635C] focus:border-transparent mb-5 text-gray-700 bg-gray-50 focus:bg-white transition-all"
+                    className="w-full px-3 py-2 border border-stone-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 mb-6 text-stone-900 bg-stone-50 focus:bg-white transition-all shadow-inner"
                     value={modalState.value}
                     onChange={e => setModalState({...modalState, value: e.target.value})}
                     onKeyDown={e => e.key === 'Enter' && handleModalSubmit()}
@@ -874,13 +604,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="flex justify-end gap-3">
                     <button 
                         onClick={closeModal} 
-                        className="px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="px-4 py-2 text-xs font-semibold text-stone-500 hover:text-stone-900 hover:bg-stone-50 rounded-md transition-colors"
                     >
                         取消
                     </button>
                     <button 
                         onClick={handleModalSubmit} 
-                        className="px-4 py-2 text-xs font-medium bg-[#55635C] text-white rounded-lg hover:bg-[#444F49] shadow-sm transition-all"
+                        className="px-6 py-2 text-xs font-bold bg-sage-500 text-white rounded-md hover:bg-sage-600 shadow-sm transition-all active:scale-95"
                     >
                         确定
                     </button>
