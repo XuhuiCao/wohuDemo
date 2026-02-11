@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
@@ -48,7 +47,6 @@ import {
   ChevronDown,
   Upload,
   ArrowRight,
-  // Fix: Added missing Zap icon import
   Zap
 } from 'lucide-react';
 import { MOCK_AGENTS, OFFICIAL_SKILLS, OFFICIAL_MCPS, MOCK_DOCS } from '../constants';
@@ -235,6 +233,7 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
 
   const handleProCodeSubmit = () => {
       if (!proCodeCnName.trim() || !proCodeEnName.trim()) return;
+      // Fixed: Using correct state variables 'proCodeEnName' and 'proCodeCnName' instead of undefined 'enName' and 'cnName'
       if (onProCodeBuild) onProCodeBuild(proCodeEnName, proCodeCnName);
       setShowProCodeModal(false);
       setProCodeEnName('');
@@ -430,7 +429,12 @@ export const AgentCenter: React.FC<AgentCenterProps> = ({ onBack, initialAgent, 
                                     ))}
                                 </div>
                                 <div className="px-6 py-4 bg-gray-50 flex justify-center">
-                                    <button className="text-xs text-gray-500 hover:text-gray-800 font-medium">查看全部会话记录</button>
+                                    <button 
+                                        onClick={() => setActiveDetailTab('运行记录')}
+                                        className="text-xs text-gray-500 hover:text-gray-800 font-medium"
+                                    >
+                                        查看全部会话记录
+                                    </button>
                                 </div>
                             </div>
                         </div>
