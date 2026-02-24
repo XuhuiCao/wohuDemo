@@ -1144,7 +1144,7 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                                             curl -X POST https://api.wohu.ai/v1/chat \<br/>
                                             &nbsp;&nbsp;-H "Authorization: Bearer sk-your-key" \<br/>
                                             &nbsp;&nbsp;-H "Content-Type: application/json" \<br/>
-                                            &nbsp;&nbsp;-d '<span className="text-green-400">{"message": "你好", "agent_id": "wohu-123"}</span>'
+                                            &nbsp;&nbsp;-d '<span className="text-green-400">{'{"message": "你好", "agent_id": "wohu-123"}'}</span>'
                                         </div>
                                     </div>
                                 </div>
