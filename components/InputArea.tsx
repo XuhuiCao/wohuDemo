@@ -270,7 +270,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
           version: 'v1.0.2',
           updated: '2天前',
           downloads: '1.2k',
-          author: (previewItem as any).author || 'Wohu Official',
+          author: (previewItem as any).author || '卧虎官方',
           title: previewItem.name,
           description: previewItem.description
       };
@@ -283,7 +283,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
               </div>
               <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
                    <div className="flex flex-col items-center text-center">
-                        <div className="w-16 h-16 bg-white rounded-md shadow-sm border border-stone-200 flex items-center justify-center text-stone-600 mb-3">
+                        <div className="w-16 h-16 bg-white rounded-md shadow-warm-sm border border-stone-200 flex items-center justify-center text-stone-600 mb-3">
                             <Icon size={32} />
                         </div>
                         <h3 className="text-lg font-bold text-stone-900 leading-tight px-2">{mockInfo.title}</h3>
@@ -292,24 +292,24 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                    
                    <button 
                       onClick={() => { toggleFunc(previewItem); }}
-                      className={`w-full py-2.5 rounded-md text-xs font-bold transition-all shadow-sm ${isSelected ? 'bg-stone-200 text-stone-600 hover:bg-stone-300' : 'bg-sage-500 text-white hover:bg-sage-600'}`}
+                      className={`w-full py-2.5 rounded-md text-xs font-bold transition-all-200 shadow-warm-xs ${isSelected ? 'bg-stone-200 text-stone-600 hover:bg-stone-300' : 'bg-sage-500 text-white hover:bg-sage-600'}`}
                    >
                       {isSelected ? '移除此项' : '添加此项'}
                    </button>
   
                    <div>
                        <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">简介</h4>
-                       <p className="text-xs text-stone-600 leading-relaxed bg-white p-3 rounded-md border border-stone-200 shadow-sm">
+                       <p className="text-xs text-stone-600 leading-relaxed bg-white p-3 rounded-md border border-stone-200 shadow-warm-xs">
                           {mockInfo.description || "暂无详细描述。该项功能可以帮助您完成特定的任务，提高工作效率。"}
                        </p>
                    </div>
   
                    <div className="grid grid-cols-2 gap-3">
-                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-sm">
+                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-warm-xs">
                            <div className="text-[10px] text-stone-400 mb-1 flex items-center gap-1 uppercase font-bold">Version</div>
                            <div className="text-xs font-medium text-stone-900">{mockInfo.version}</div>
                        </div>
-                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-sm">
+                       <div className="bg-white p-3 rounded-md border border-stone-100 shadow-warm-xs">
                            <div className="text-[10px] text-stone-400 mb-1 flex items-center gap-1 uppercase font-bold">Updated</div>
                            <div className="text-xs font-medium text-stone-900">{mockInfo.updated}</div>
                        </div>
@@ -321,11 +321,11 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
 
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/20 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-md shadow-2xl w-[900px] h-[600px] flex overflow-hidden animate-in zoom-in-95 duration-200 border border-stone-200">
+          <div className="bg-white rounded-md shadow-warm-lg w-[900px] h-[600px] flex overflow-hidden animate-in zoom-in-95 duration-200 border border-stone-200">
               <div className="w-56 bg-stone-50 border-r border-stone-200 flex flex-col p-4 shrink-0">
                   <button 
                       onClick={handleCreateClick}
-                      className="w-full flex items-center gap-2 px-4 py-2.5 bg-white border border-stone-200 rounded-md text-sm font-semibold text-stone-700 hover:border-sage-500 hover:text-sage-700 transition-all shadow-sm mb-6 mt-1"
+                      className="w-full flex items-center gap-2 px-4 py-2.5 bg-white border border-stone-200 rounded-md text-sm font-semibold text-stone-700 hover:border-sage-500 hover:text-sage-700 transition-all shadow-warm-xs mb-6 mt-1 active-press"
                   >
                       <Plus size={16} /> 创建{typeLabel}
                   </button>
@@ -334,14 +334,14 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                       <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest">分类</div>
                       <button 
                           onClick={() => { setSelectorTab('official'); setIsCreating(false); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all text-left ${!isCreating && selectorTab === 'official' ? 'bg-sage-50 text-sage-700 font-semibold shadow-sm border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all-200 text-left ${!isCreating && selectorTab === 'official' ? 'bg-sage-50 text-sage-700 font-semibold shadow-warm-xs border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
                       >
                           <Library size={18} className={!isCreating && selectorTab === 'official' ? 'text-sage-600' : 'text-stone-400'} /> 
                           官方{typeLabel}
                       </button>
                       <button 
                           onClick={() => { setSelectorTab('mine'); setIsCreating(false); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all text-left ${!isCreating && selectorTab === 'mine' ? 'bg-sage-50 text-sage-700 font-semibold shadow-sm border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all-200 text-left ${!isCreating && selectorTab === 'mine' ? 'bg-sage-50 text-sage-700 font-semibold shadow-warm-xs border border-sage-100' : 'text-stone-600 hover:bg-stone-100'}`}
                       >
                           <LayoutGrid size={18} className={!isCreating && selectorTab === 'mine' ? 'text-sage-600' : 'text-stone-400'} /> 
                           我的{typeLabel}
@@ -360,7 +360,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                              </div>
                              <div className="flex-1 p-8 flex items-center justify-center">
                                  <div className="w-full h-full border-2 border-dashed border-stone-200 rounded-md flex flex-col items-center justify-center bg-stone-50/50">
-                                     <div className="w-16 h-16 bg-white rounded-md border border-stone-200 flex items-center justify-center mb-6 shadow-sm">
+                                     <div className="w-16 h-16 bg-white rounded-md border border-stone-200 flex items-center justify-center mb-6 shadow-warm-xs">
                                          <Plus size={32} className="text-stone-300" />
                                      </div>
                                      <h3 className="text-stone-900 font-bold mb-8 text-lg">暂无我的技能</h3>
@@ -370,13 +370,13 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                      <div className="flex gap-6">
                                          <button 
                                              onClick={() => toolFileInputRef.current?.click()}
-                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-sm flex items-center gap-2"
+                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-warm-xs flex items-center gap-2 active-press"
                                          >
                                              <Upload size={16}/> 本地上传
                                          </button>
                                          <button 
                                              onClick={handleAiDev}
-                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-sm flex items-center gap-2"
+                                             className="px-8 py-3 bg-white border border-stone-200 rounded-md text-sm font-bold text-stone-700 hover:border-stone-400 hover:bg-white transition-all shadow-warm-xs flex items-center gap-2 active-press"
                                          >
                                              <Code size={16}/> AI 开发
                                          </button>
@@ -406,7 +406,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                           <div 
                                               key={item.id} 
                                               onClick={() => setPreviewItem(item)}
-                                              className={`flex items-center justify-between p-4 rounded-md border transition-all group cursor-pointer ${isPreviewing ? 'border-sage-500 bg-sage-50/30 shadow-sm' : 'border-stone-100 hover:shadow-md hover:border-stone-200 bg-white'}`}
+                                              className={`flex items-center justify-between p-4 rounded-md border transition-all-200 group cursor-pointer ${isPreviewing ? 'border-sage-500 bg-sage-50/30 shadow-warm-xs' : 'border-stone-100 hover:shadow-warm-md hover:border-stone-200 bg-white'}`}
                                           >
                                               <div className="flex items-center gap-4 min-w-0">
                                                   <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isSelected ? 'bg-sage-50 text-sage-600 border border-sage-100' : 'bg-stone-50 text-stone-400 border border-stone-100'}`}>
@@ -420,10 +420,10 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                               
                                               <button 
                                                   onClick={(e) => { e.stopPropagation(); toggleFunc(item); }}
-                                                  className={`ml-4 px-4 py-2 rounded-md text-xs font-bold transition-all shrink-0 ${
+                                                  className={`ml-4 px-4 py-2 rounded-md text-xs font-bold transition-all-200 shrink-0 ${
                                                       isSelected 
                                                       ? 'bg-stone-100 text-stone-400 shadow-inner' 
-                                                      : 'bg-white border border-stone-200 text-stone-700 hover:border-sage-500 hover:text-sage-600 shadow-sm'
+                                                      : 'bg-white border border-stone-200 text-stone-700 hover:border-sage-500 hover:text-sage-600 shadow-warm-xs'
                                                   }`}
                                               >
                                                   {isSelected ? '已添加' : '添加'}
@@ -456,10 +456,10 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
   return (
     <div className={`w-full ${isCentered ? 'max-w-[800px]' : 'max-w-4xl'} mx-auto ${isCentered ? '' : 'px-4 pb-6'}`}>
       <div 
-        className={`relative bg-white transition-all duration-300
+        className={`relative bg-white transition-all-200
         ${isCentered 
-            ? 'rounded-md border border-stone-200 shadow-sm' 
-            : 'rounded-md border border-stone-200 shadow-lg'
+            ? 'rounded-md border border-stone-200 shadow-warm-xs' 
+            : 'rounded-md border border-stone-200 shadow-warm-lg'
         }`}
       >
         <div className="bg-white rounded-md">
@@ -477,7 +477,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
             />
 
             {showAtMenu && (
-                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-warm-lg z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                     <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 bg-stone-50/50 uppercase tracking-widest border-b border-stone-100 mb-1">知识库</div>
                     {MOCK_DOCS.map(doc => (
                         <div key={doc.id} onClick={() => insertText(`@${doc.title}`, '@')} className="px-3 py-2 hover:bg-stone-50 text-sm cursor-pointer flex items-center gap-2 text-stone-700">
@@ -494,11 +494,11 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
             )}
 
             {showSlashMenu && (
-                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                <div className="popup-menu absolute left-4 bottom-14 w-64 bg-white border border-stone-200 rounded-md shadow-warm-lg z-[100] py-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                      <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 bg-stone-50/50 uppercase tracking-widest border-b border-stone-100 mb-1">快捷指令</div>
                      {SLASH_COMMANDS.map(cmd => (
                         <div key={cmd.id} onClick={() => insertText(cmd.label, '/')} className="px-3 py-2 hover:bg-stone-50 cursor-pointer flex items-center gap-3 group">
-                            <div className="w-8 h-8 rounded bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-white group-hover:text-sage-600 transition-colors border border-transparent group-hover:border-stone-200">
+                            <div className="w-8 h-8 rounded bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-white group-hover:text-sage-600 transition-all-200 border border-transparent group-hover:border-stone-200">
                                 <cmd.icon size={14} />
                             </div>
                             <div>
@@ -516,7 +516,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                     
                     <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className={`flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-stone-200/50 transition-all rounded-md
+                        className={`flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-stone-200/50 transition-all-200 rounded-md
                             ${isCentered ? 'w-8 h-8' : 'w-7 h-7'}`}
                         title="上传文件"
                     >
@@ -528,7 +528,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                             <div className="relative" ref={modelMenuRef}>
                                 <button 
                                     onClick={() => setShowModelMenu(!showModelMenu)}
-                                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-stone-200/50 cursor-pointer text-xs font-bold text-stone-600 transition-all border border-transparent hover:border-stone-200 ${showModelMenu ? 'bg-stone-200/50 border-stone-200' : ''}`}
+                                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-stone-200/50 cursor-pointer text-xs font-bold text-stone-600 transition-all-200 border border-transparent hover:border-stone-200 ${showModelMenu ? 'bg-stone-200/50 border-stone-200' : ''}`}
                                 >
                                 <Zap size={14} className="text-sage-500"/>
                                 <span>{selectedModel.name}</span>
@@ -536,7 +536,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                                 </button>
 
                                 {showModelMenu && (
-                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-stone-200 rounded-md shadow-xl z-[110] py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100 max-h-[300px] overflow-y-auto custom-scrollbar">
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-stone-200 rounded-md shadow-warm-lg z-[110] py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100 max-h-[300px] overflow-y-auto custom-scrollbar">
                                         {MODELS.map(model => (
                                             <button
                                                 key={model.id}
@@ -570,7 +570,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                             <div className="h-4 w-px bg-stone-200 mx-1"></div>
 
                             <div 
-                                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all select-none font-bold ${webSearch ? 'bg-sage-50 text-sage-600 shadow-sm border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
+                                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all-200 select-none font-bold ${webSearch ? 'bg-sage-50 text-sage-700 shadow-warm-xs border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
                                 onClick={() => setWebSearch(!webSearch)}
                             >
                                 <Globe size={14} />
@@ -578,7 +578,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                             </div>
 
                             <div 
-                                className={`tool-trigger flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all select-none font-bold ${activeSkills.length > 0 ? 'bg-sage-50 text-sage-600 shadow-sm border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
+                                className={`tool-trigger flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer text-xs transition-all-200 select-none font-bold ${activeSkills.length > 0 ? 'bg-sage-50 text-sage-700 shadow-warm-xs border border-sage-100' : 'text-stone-400 hover:bg-stone-200/50 hover:text-stone-700'}`}
                                 onClick={() => {
                                     setShowSelectorModal('skills');
                                     setSelectorTab('official');
@@ -586,7 +586,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                             >
                                 <Puzzle size={14} />
                                 <span className="hidden sm:inline">技能</span>
-                                {activeSkills.length > 0 && <span className="bg-sage-100 text-sage-700 px-1.5 rounded-full text-[10px]">{activeSkills.length}</span>}
+                                {activeSkills.length > 0 && <span className="bg-sage-100 text-sage-700 px-1.5 rounded-full text-[10px] ml-1">{activeSkills.length}</span>}
                             </div>
                         </>
                     )}
@@ -596,8 +596,8 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
                     <button 
                         onClick={handleSend}
                         disabled={!input.trim() || disabled}
-                        className={`w-8 h-8 rounded-md transition-all flex items-center justify-center ml-1
-                            ${input.trim() && !disabled ? 'bg-sage-500 text-white hover:bg-sage-600 shadow-sm active:scale-95' : 'bg-stone-200 text-stone-400'}
+                        className={`w-8 h-8 rounded-md transition-all-200 flex items-center justify-center ml-1
+                            ${input.trim() && !disabled ? 'bg-sage-500 text-white hover:bg-sage-600 shadow-sage-btn active-press' : 'bg-stone-200 text-stone-400 cursor-not-allowed'}
                         `}
                     >
                         <ArrowUp size={18} />
@@ -610,14 +610,14 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(({ onSendMessa
             <div className="flex gap-2 mt-4 px-1">
                 <button 
                     onClick={() => setInput(prev => prev + '我想构建一个智能体 ')}
-                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all shadow-sm active:translate-y-px"
+                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all-200 shadow-warm-xs hover-lift active-press"
                 >
                     <Box size={14} className="text-sage-500"/>
                     构建智能体
                 </button>
                 <button 
                     onClick={() => setInput(prev => prev + '生成 UI 界面 ')}
-                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all shadow-sm active:translate-y-px"
+                    className="flex items-center gap-2 px-4 py-2 bg-stone-50 border border-stone-200 rounded-md text-xs font-semibold text-stone-600 hover:bg-white hover:border-sage-300 hover:text-sage-700 transition-all-200 shadow-warm-xs hover-lift active-press"
                 >
                     <Palette size={14} className="text-sage-500"/>
                     生成 UI

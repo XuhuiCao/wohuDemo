@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { AgentCenter } from './components/AgentCenter';
@@ -45,6 +44,10 @@ function App() {
       setChats(prev => prev.map(c => c.id === chatId ? { ...c, messages, updatedAt: Date.now() } : c));
   };
 
+  const handleToggleShare = (chatId: string, isShared: boolean) => {
+      setChats(prev => prev.map(c => c.id === chatId ? { ...c, isShared } : c));
+  };
+
   const handleCreateChat = (initialMessage: string) => {
       const newId = Date.now().toString();
       const newChat: ChatSession = {
@@ -57,7 +60,8 @@ function App() {
               timestamp: Date.now()
           }],
           updatedAt: Date.now(),
-          groupId: undefined
+          groupId: undefined,
+          isShared: false
       };
       
       setChats(prev => [newChat, ...prev]);
@@ -110,7 +114,8 @@ function App() {
               timestamp: Date.now()
           }],
           updatedAt: Date.now(),
-          groupId: selectedGroupId || undefined
+          groupId: selectedGroupId || undefined,
+          isShared: false
       };
       
       setChats([newChat, ...chats]);
@@ -216,6 +221,7 @@ function App() {
             chatSession={null}
             onUpdateChat={handleUpdateChat}
             onCreateChat={handleCreateChat}
+            onToggleShare={handleToggleShare}
         />;
       case ViewState.PLAYGROUND:
         const activeChat = chats.find(c => c.id === activeChatId);
@@ -225,6 +231,7 @@ function App() {
             chatSession={activeChat}
             onUpdateChat={handleUpdateChat}
             onCreateChat={handleCreateChat}
+            onToggleShare={handleToggleShare}
         />;
       case ViewState.AGENT_BUILDER:
         return <Playground 
@@ -233,9 +240,10 @@ function App() {
             agentToEdit={agentToEdit} 
             onUpdateChat={handleUpdateChat}
             onCreateChat={handleCreateChat}
+            onToggleShare={handleToggleShare}
         />;
       default:
-        return <Playground initialMode="chat" onNavigate={handleViewChange} />;
+        return <Playground initialMode="chat" onNavigate={handleViewChange} onToggleShare={handleToggleShare} />;
     }
   };
 

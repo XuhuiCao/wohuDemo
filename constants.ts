@@ -1,3 +1,4 @@
+
 import { Agent, ChatSession, KnowledgeDoc, UIStyle, Skill, MCP } from './types';
 
 export const MOCK_AGENTS: Agent[] = [
@@ -10,7 +11,7 @@ export const MOCK_AGENTS: Agent[] = [
       type: 'quick', 
       space: '崇启的空间', 
       lastOperatedAt: '10分钟前',
-      lastEditedBy: '${编辑人}',
+      lastEditedBy: '崇启',
       lastEditedDate: '01-21'
   },
   { 
@@ -20,9 +21,9 @@ export const MOCK_AGENTS: Agent[] = [
       version: '0.9.0', 
       status: 'draft', 
       type: 'code', 
-      space: '崇启的空间', 
+      space: '研发中心空间', 
       lastOperatedAt: '2小时前',
-      lastEditedBy: '${编辑人}',
+      lastEditedBy: '张三',
       lastEditedDate: '01-21'
   },
   { 
@@ -32,9 +33,9 @@ export const MOCK_AGENTS: Agent[] = [
       version: '2.1.0', 
       status: 'published', 
       type: 'code', 
-      space: '崇启的空间', 
+      space: '创新实验室', 
       lastOperatedAt: '刚刚',
-      lastEditedBy: '${编辑人}',
+      lastEditedBy: '李四',
       lastEditedDate: '01-21'
   },
   { 
@@ -45,7 +46,8 @@ export const MOCK_AGENTS: Agent[] = [
       status: 'publishing', 
       type: 'quick', 
       space: '崇启的空间', 
-      lastEditedBy: '${编辑人}',
+      lastOperatedAt: '1天前',
+      lastEditedBy: '崇启',
       lastEditedDate: '01-21'
   },
   { 
@@ -55,8 +57,9 @@ export const MOCK_AGENTS: Agent[] = [
       version: '1.0.0', 
       status: 'draft', 
       type: 'quick', 
-      space: '崇启的空间', 
-      lastEditedBy: '${编辑人}',
+      space: '默认空间', 
+      lastOperatedAt: '3天前',
+      lastEditedBy: '崇启',
       lastEditedDate: '01-21'
   },
   { 
@@ -66,8 +69,9 @@ export const MOCK_AGENTS: Agent[] = [
       version: '1.0.0', 
       status: 'published', 
       type: 'quick', 
-      space: '崇启的空间', 
-      lastEditedBy: '${编辑人}',
+      space: '设计部空间', 
+      lastOperatedAt: '1周前',
+      lastEditedBy: '王五',
       lastEditedDate: '01-21'
   },
   { 
@@ -78,7 +82,8 @@ export const MOCK_AGENTS: Agent[] = [
       status: 'publishing', 
       type: 'quick', 
       space: '崇启的空间', 
-      lastEditedBy: '${编辑人}',
+      lastOperatedAt: '刚刚',
+      lastEditedBy: '崇启',
       lastEditedDate: '01-21'
   },
   { 
@@ -88,8 +93,9 @@ export const MOCK_AGENTS: Agent[] = [
       version: '1.0.0', 
       status: 'draft', 
       type: 'quick', 
-      space: '崇启的空间', 
-      lastEditedBy: '${编辑人}',
+      space: '个人私有空间', 
+      lastOperatedAt: '2小时前',
+      lastEditedBy: '崇启',
       lastEditedDate: '01-21'
   },
 ];

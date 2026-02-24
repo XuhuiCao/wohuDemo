@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
@@ -58,7 +57,15 @@ import {
   User as UserIcon,
   CheckCircle,
   Info,
-  LogOut
+  LogOut,
+  Rocket,
+  ShieldCheck,
+  Zap,
+  Lock,
+  Trophy,
+  Flag,
+  Monitor,
+  Cloud
 } from 'lucide-react';
 import { InputArea } from './InputArea';
 import { Message, Skill, MCP, KnowledgeDoc, ViewState } from '../types';
@@ -84,6 +91,7 @@ interface AgentBuilderProps {
 type Tab = 'preview' | 'logs' | 'deploy' | 'config';
 type ConfigSubTab = 'skills' | 'mcp' | 'knowledge';
 type ConsumptionTab = 'method' | 'basic';
+type DeployEnv = 'dev' | 'staging' | 'prod';
 
 const IconMap: Record<string, any> = {
     Bot: Bot,
@@ -154,6 +162,7 @@ interface DeployRecord {
     time: string;
     diffs?: FileDiff[];
     version?: string;
+    env?: DeployEnv[];
 }
 
 const MOCK_DEPLOY_RECORDS: DeployRecord[] = [
@@ -163,6 +172,7 @@ const MOCK_DEPLOY_RECORDS: DeployRecord[] = [
         userId: '崇启', 
         time: '5 小时前',
         version: 'v1.0.1',
+        env: ['dev'],
         diffs: [
             {
                 fileName: 'requirements.txt',
@@ -198,28 +208,32 @@ const MOCK_DEPLOY_RECORDS: DeployRecord[] = [
         message: 'auto saved your changes before restore', 
         userId: '崇启', 
         time: '5 小时前',
-        version: 'v1.0.0'
+        version: 'v1.0.0',
+        env: ['staging', 'prod']
     },
     { 
         id: '1f5af1e', 
         message: 'auto saved your changes before deploy', 
         userId: '崇启', 
         time: '8 天前',
-        version: 'v0.9.2'
+        version: 'v0.9.2',
+        env: ['prod']
     },
     { 
         id: '45cd236', 
         message: 'feat: 创建旅行规划大师 Agent，支持联网搜索获取实时旅游信息并提供个性化旅行建议', 
         userId: '崇启', 
         time: '12 天前',
-        version: 'v0.9.1'
+        version: 'v0.9.1',
+        env: ['dev', 'staging']
     },
     { 
         id: '6a1cd96', 
         message: 'Initial commit', 
         userId: '崇启', 
         time: '12 天前',
-        version: 'v0.9.0'
+        version: 'v0.9.0',
+        env: ['dev']
     },
 ];
 
@@ -251,10 +265,11 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
   const [showDebugModal, setShowDebugModal] = useState(false);
   const [debugChannel, setDebugChannel] = useState<'DingTalk' | 'AntCode' | null>(null);
 
-  // ProCode Modal State
+  // Mode Upgrade Modal State
   const [showProCodeModal, setShowProCodeModal] = useState(false);
   const [proCodeEnName, setProCodeEnName] = useState("");
   const [proCodeCnName, setProCodeCnName] = useState("");
+  const [proCodeSpace, setProCodeSpace] = useState("个人空间");
 
   // Version History state
   const [showVersionHistory, setShowVersionHistory] = useState(false);
@@ -266,6 +281,11 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
   const [selectedSpace, setSelectedSpace] = useState('个人空间');
   const [releaseVersion, setReleaseVersion] = useState('v1.1.0');
   const [isDeployed, setIsDeployed] = useState(false);
+  const [deployedVersions, setDeployedVersions] = useState({
+      dev: 'v1.0.1',
+      staging: 'v1.0.0',
+      prod: 'v1.0.0'
+  });
   const [changeDesc, setChangeDesc] = useState(`基于当前配置自动生成变更：\n1. 更新了系统提示词以更好地支持多模态交互\n2. 优化了模型推理策略\n3. 新增了 2 项核心技能集成`);
 
   // Preview Mode State
@@ -386,14 +406,28 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
   };
 
   const handleDeploy = () => {
+      // Restriction Check for Production
+      if (selectedEnv === 'prod' && deployedVersions.staging !== releaseVersion) {
+          alert(`发布失败：生产环境只能发布已部署在预发环境的版本 (${deployedVersions.staging})。请先将 ${releaseVersion} 部署到预发环境。`);
+          return;
+      }
+
       const envName = selectedEnv === 'dev' ? '开发环境' : selectedEnv === 'staging' ? '预发环境' : '生产环境';
-      alert(`已开始在 ${envName} 部署版本 ${releaseVersion}！`);
+      const actionLabel = selectedEnv === 'prod' ? '发布' : '部署';
+      
+      alert(`已开始将版本 ${releaseVersion} ${actionLabel}至 ${envName}！`);
+      
+      // Update local state to reflect deployment
+      setDeployedVersions(prev => ({
+          ...prev,
+          [selectedEnv]: releaseVersion
+      }));
       setIsDeployed(true);
   };
 
   const handleUpgradeToProCode = () => {
       // Simulate upgrade and redirect to agent center detail
-      alert(`智能体 "${proCodeCnName}" 已成功升级为 ProCode 模式。`);
+      alert(`智能体 "${proCodeCnName}" 已成功升级为 编码模式。所属空间: ${proCodeSpace}`);
       setShowProCodeModal(false);
       if (onNavigate) {
           onNavigate(ViewState.AGENT_CENTER);
@@ -812,13 +846,24 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                          <div className="flex-1 overflow-y-auto p-6">
                               <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6 shadow-sm">
                                   <div className="flex justify-between items-start mb-2">
-                                      <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                          <span className="font-mono text-base text-gray-500">{selectedDeployRecord.id}</span>
-                                          {selectedDeployRecord.message}
-                                      </h2>
+                                      <div className="flex flex-col gap-1">
+                                          <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                              <span className="font-mono text-base text-gray-500">{selectedDeployRecord.id}</span>
+                                              {selectedDeployRecord.message}
+                                          </h2>
+                                          <div className="flex gap-2">
+                                              {selectedDeployRecord.env?.map(env => (
+                                                  <span key={env} className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                                                      env === 'dev' ? 'bg-blue-50 text-blue-600 border-blue-100' : 
+                                                      env === 'staging' ? 'bg-purple-50 text-purple-600 border-purple-100' : 
+                                                      'bg-green-50 text-green-600 border-green-100'
+                                                  }`}>{env === 'dev' ? 'DEV' : env === 'staging' ? 'PRE' : 'PROD'}</span>
+                                              ))}
+                                          </div>
+                                      </div>
                                       <span className="text-xs text-gray-500">{selectedDeployRecord.userId} · {selectedDeployRecord.time}</span>
                                   </div>
-                                  <div className="text-sm text-gray-900 font-bold">
+                                  <div className="text-sm text-gray-900 font-bold mt-4">
                                       变更文件数：{selectedDeployRecord.diffs?.length || 0}
                                   </div>
                               </div>
@@ -860,40 +905,134 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                     </div>
                 );
             }
+
             return (
-                <div className="p-6 h-full flex flex-col bg-white">
-                    <div className="flex justify-between items-center mb-6 shrink-0">
-                        <div className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                             <GitBranch size={20}/>
-                             Main
-                        </div>
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14}/>
-                            <input className="pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-1 focus:ring-gray-300" placeholder="搜索内容"/>
-                        </div>
-                    </div>
-                    <div className="relative border-l border-gray-200 ml-3 space-y-4 pl-8 py-2 flex-1 overflow-y-auto">
-                        {MOCK_DEPLOY_RECORDS.map((record, idx) => (
-                             <div key={record.id} className="relative cursor-pointer group" onClick={() => setSelectedDeployRecord(record)}>
-                                <div className="absolute -left-[39px] top-1/2 -translate-y-1/2 w-3 h-3 bg-gray-800 rounded-full border-2 border-white ring-1 ring-gray-200 group-hover:scale-125 transition-transform z-10"></div>
-                                <div className="bg-white hover:bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm group-hover:shadow-md transition-all flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        {record.version && (
-                                            <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-1 shrink-0">
-                                                <Tag size={10}/>
-                                                {record.version}
-                                            </span>
-                                        )}
-                                        <span className="font-mono text-sm font-bold text-gray-900 w-16">{record.id}</span>
-                                        <span className="text-sm text-gray-700 font-medium line-clamp-1 max-w-md" title={record.message}>{record.message}</span>
+                <div className="flex flex-col h-full bg-[#F8F9FA]">
+                    {/* Unified Deploy Status Board */}
+                    <div className="p-6 bg-white border-b border-gray-200 shadow-sm z-10 shrink-0">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                    <Layers size={18} className="text-sage-500"/>
+                                    全环境部署状态概览
+                                </h2>
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-stone-50 px-2 py-0.5 rounded border border-stone-200">Global Deployment Board</div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-6">
+                                <div className="p-4 rounded-2xl border-2 border-blue-50 bg-blue-50/20 shadow-sm flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">DEV (开发环境)</span>
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold border border-green-200">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                            Running
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-4 text-xs text-gray-400">
-                                        <span>{record.userId}</span>
-                                        <span>{record.time}</span>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-lg font-bold text-gray-900">{deployedVersions.dev}</span>
+                                        <span className="text-[10px] text-gray-400 font-mono">Main Branch</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-1">
+                                        <UserIcon size={12}/> 崇启 · 5 小时前
+                                    </div>
+                                </div>
+
+                                <div className="p-4 rounded-2xl border-2 border-purple-50 bg-purple-50/20 shadow-sm flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest">PRE (预发环境)</span>
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold border border-purple-200">
+                                            Deployed
+                                        </div>
+                                    </div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-lg font-bold text-gray-900">{deployedVersions.staging}</span>
+                                        <span className="text-[10px] text-gray-400 font-mono">Release-Candidate</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-1">
+                                        <CheckCircle size={12} className="text-purple-400"/> 测试已通过
+                                    </div>
+                                </div>
+
+                                <div className="p-4 rounded-2xl border-2 border-sage-50 bg-sage-50/20 shadow-sm flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-sage-600 uppercase tracking-widest">PROD (生产环境)</span>
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sage-100 text-sage-700 text-[10px] font-bold border border-sage-200">
+                                            Online
+                                        </div>
+                                    </div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-lg font-bold text-gray-900">{deployedVersions.prod}</span>
+                                        <span className="text-[10px] text-gray-400 font-mono">Production-Stable</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-1">
+                                        <ShieldCheck size={12} className="text-sage-400"/> 安全审计通过
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                        <div className="max-w-6xl mx-auto space-y-6">
+                            <div className="flex justify-between items-center px-2">
+                                <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                    <History size={16} className="text-stone-400"/>
+                                    全环境部署流水线
+                                </h3>
+                                <div className="relative">
+                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" />
+                                    <input className="pl-9 pr-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs w-64 focus:ring-1 focus:ring-blue-100 outline-none" placeholder="搜索版本或说明"/>
+                                </div>
+                            </div>
+
+                            <div className="relative border-l-2 border-gray-200 ml-6 space-y-8 pl-10 py-4">
+                                {MOCK_DEPLOY_RECORDS.map((record, idx) => {
+                                    const isCurrentlyOccupyingAny = (record.env && record.env.length > 0);
+                                    return (
+                                        <div key={record.id} className="relative cursor-pointer group" onClick={() => setSelectedDeployRecord(record)}>
+                                            {/* Timeline Node */}
+                                            <div className={`absolute -left-[51px] top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white shadow-sm transition-all z-10 ${isCurrentlyOccupyingAny ? 'bg-sage-500 ring-4 ring-sage-50' : 'bg-gray-300 group-hover:bg-gray-400'}`}></div>
+                                            
+                                            <div className="bg-white hover:bg-stone-50 p-5 rounded-2xl border border-gray-200 shadow-sm transition-all group-hover:shadow-md flex flex-col gap-4">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="font-mono text-xs font-bold text-gray-400 bg-stone-50 px-2 py-0.5 rounded border border-stone-200">{record.id}</span>
+                                                            <span className="text-sm text-gray-800 font-bold group-hover:text-sage-600 transition-colors line-clamp-1">{record.message}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-[11px] text-gray-400">
+                                                            <UserIcon size={12}/> {record.userId} · <Clock size={12}/> {record.time}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        {record.version && (
+                                                            <span className="px-2 py-0.5 rounded-lg bg-stone-100 text-stone-600 text-[10px] font-bold border border-stone-200 uppercase tracking-widest flex items-center gap-1">
+                                                                <Tag size={10}/> {record.version}
+                                                            </span>
+                                                        )}
+                                                        <ChevronRight size={16} className="text-stone-300 group-hover:text-sage-500 transition-all group-hover:translate-x-0.5"/>
+                                                    </div>
+                                                </div>
+
+                                                {/* Occupancy Badges */}
+                                                {isCurrentlyOccupyingAny && (
+                                                    <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-50">
+                                                        {record.env?.map(env => (
+                                                            <div key={env} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[10px] font-bold uppercase tracking-wider ${
+                                                                env === 'dev' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                                env === 'staging' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                                'bg-green-50 text-green-700 border-green-100'
+                                                            }`}>
+                                                                <Flag size={10}/> {env === 'dev' ? 'Currently in DEV' : env === 'staging' ? 'Currently in PRE' : 'Currently in PROD'}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -1033,21 +1172,21 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                             </div>
                         ) : (
                             <div className="p-6 space-y-6">
-                                {/* ProCode Upgrade Banner */}
+                                {/* Mode Upgrade Banner */}
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                                            <Info size={18}/>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
                                         </div>
                                         <p className="text-[13px] text-blue-700 font-medium">
-                                            当前模式构建的智能体代码文件仅可读，若需高度自定义编码可升级为 ProCode 模式。
+                                            当前模式构建的智能体代码文件仅可读，若需高度自定义编码可升级为编码模式。
                                         </p>
                                     </div>
                                     <button 
                                         onClick={() => setShowProCodeModal(true)}
                                         className="text-[13px] font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
                                     >
-                                        升级为 ProCode <ChevronRight size={14}/>
+                                        升级为编码模式 <ChevronRight size={14}/>
                                     </button>
                                 </div>
 
@@ -1438,9 +1577,9 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
               <div className="bg-white rounded-xl shadow-2xl w-[500px] p-8 animate-in zoom-in-95 duration-200 relative">
                   <button onClick={() => setShowProCodeModal(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-600"><X size={20}/></button>
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">升级为 ProCode 模式</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">升级为编码模式</h2>
                   <p className="text-sm text-gray-500 leading-relaxed mb-8">
-                      将当前模式构建的智能体升级为 ProCode 模式，将支持用户高度自定义编码。但升级后，将仅支持编码修改发布，不可回退至当前模式。
+                      将当前模式构建的智能体升级为编码模式，将支持用户高度自定义编码。但升级后，将仅支持编码修改发布，不可回退至当前模式。
                   </p>
                   
                   <div className="space-y-6 mb-10">
@@ -1465,6 +1604,24 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                               className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#55635C] outline-none"
                               placeholder="默认代入支持修改"
                           />
+                      </div>
+                      <div className="space-y-2">
+                          <label className="text-sm text-gray-700 font-medium flex items-center gap-1">
+                              <span className="text-red-500">*</span>归属空间
+                          </label>
+                          <div className="relative group">
+                              <select 
+                                  value={proCodeSpace}
+                                  onChange={(e) => setProCodeSpace(e.target.value)}
+                                  className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#55635C] outline-none pr-10 bg-white"
+                              >
+                                  <option value="个人空间">个人空间</option>
+                                  <option value="研发中心空间">研发中心空间</option>
+                                  <option value="创新实验室">创新实验室</option>
+                                  <option value="默认空间">默认空间</option>
+                              </select>
+                              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-gray-600"/>
+                          </div>
                       </div>
                   </div>
 
@@ -1491,6 +1648,12 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
   const renderReleaseDrawer = () => {
     if (!showReleaseDrawer) return null;
 
+    const actionText = selectedEnv === 'prod' ? '发布生产' : selectedEnv === 'staging' ? '部署预发' : '部署开发';
+    const actionIcon = selectedEnv === 'prod' ? <Rocket size={16} /> : <Zap size={16} />;
+
+    // Production restricted if staging version doesn't match releaseVersion
+    const isProdRestricted = selectedEnv === 'prod' && deployedVersions.staging !== releaseVersion;
+
     return createPortal(
         <div className="fixed inset-0 z-[300] flex justify-end bg-black/30 backdrop-blur-[2px] animate-in fade-in duration-300">
             <div 
@@ -1513,94 +1676,112 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                             onClick={() => setShowReleaseDrawer(false)}
                             className="px-6 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
                         >
-                            取消发布
+                            取消
                         </button>
                         <button 
                             onClick={handleDeploy}
-                            className="px-6 py-2 bg-[#55635C] text-white rounded-lg text-sm font-medium hover:bg-[#444F49] shadow-sm transition-all flex items-center gap-2"
+                            disabled={isProdRestricted}
+                            className={`px-6 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2 ${
+                                isProdRestricted
+                                ? 'bg-gray-300 text-white cursor-not-allowed opacity-60'
+                                : selectedEnv === 'prod' 
+                                    ? 'bg-[#55635C] text-white hover:bg-[#444F49]' 
+                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                            }`}
                         >
-                            {selectedEnv === 'dev' ? '部署开发' : selectedEnv === 'staging' ? '部署预发' : '部署生产'}
+                            {isProdRestricted ? <Lock size={16}/> : actionIcon}
+                            {actionText}
                         </button>
                     </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12">
                     {/* Environments Section */}
-                    <div className="grid grid-cols-3 gap-4">
-                        <div 
-                            onClick={() => setSelectedEnv('dev')}
-                            className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative ${selectedEnv === 'dev' ? 'border-[#55635C] bg-[#55635C]/5 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
-                        >
-                            <div className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-widest">开发环境</div>
-                            <div className="flex flex-col gap-2">
-                                <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold">已部署</span>
-                                <div className="text-[11px] text-gray-400 flex items-center gap-1.5 mt-1">
-                                    <UserIcon size={12}/> 崇启
-                                </div>
-                                <div className="text-[11px] text-gray-400 flex items-center gap-1.5">
-                                    <Clock size={12}/> 21 小时前
-                                </div>
-                            </div>
-                            {selectedEnv === 'dev' && <div className="absolute top-2 right-2"><CheckCircle size={16} className="text-[#55635C] fill-[#55635C]/10"/></div>}
+                    <div>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-bold text-gray-900">选择环境</h3>
+                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Environment Selector</div>
                         </div>
-
-                        <div 
-                            onClick={() => setSelectedEnv('staging')}
-                            className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative ${selectedEnv === 'staging' ? 'border-[#55635C] bg-[#55635C]/5 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
-                        >
-                            <div className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-widest">预发环境</div>
-                            <div className="flex flex-col gap-2 h-full">
-                                <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-gray-200 text-gray-500 text-[10px] font-bold">未部署</span>
+                        <div className="grid grid-cols-3 gap-4">
+                            <div 
+                                onClick={() => setSelectedEnv('dev')}
+                                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative group ${selectedEnv === 'dev' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
+                            >
+                                <div className={`text-xs font-bold mb-4 uppercase tracking-widest ${selectedEnv === 'dev' ? 'text-blue-700' : 'text-gray-500'}`}>开发环境 (DEV)</div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold border border-green-200">运行中</span>
+                                    <div className="text-[11px] text-gray-700 font-bold flex items-center gap-1.5 mt-1">
+                                        当前版本: <span className="font-mono text-blue-600">{deployedVersions.dev}</span>
+                                    </div>
+                                    <div className="text-[11px] text-gray-400 flex items-center gap-1.5">
+                                        <UserIcon size={12}/> 崇启 · 21 小时前
+                                    </div>
+                                </div>
+                                {selectedEnv === 'dev' && <div className="absolute top-2 right-2"><CheckCircle size={18} className="text-blue-600 fill-white"/></div>}
                             </div>
-                            {selectedEnv === 'staging' && <div className="absolute top-2 right-2"><CheckCircle size={16} className="text-[#55635C] fill-[#55635C]/10"/></div>}
-                        </div>
 
-                        <div 
-                            onClick={() => setSelectedEnv('prod')}
-                            className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative ${selectedEnv === 'prod' ? 'border-[#55635C] bg-[#55635C]/5 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
-                        >
-                            <div className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-widest">生产环境</div>
-                            <div className="flex flex-col gap-2">
-                                <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-gray-200 text-gray-500 text-[10px] font-bold">未部署</span>
+                            <div 
+                                onClick={() => setSelectedEnv('staging')}
+                                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative group ${selectedEnv === 'staging' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
+                            >
+                                <div className={`text-xs font-bold mb-4 uppercase tracking-widest ${selectedEnv === 'staging' ? 'text-blue-700' : 'text-gray-500'}`}>预发环境 (PRE)</div>
+                                <div className="flex flex-col gap-2 h-full">
+                                    <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-bold border border-blue-200">已部署</span>
+                                    <div className="text-[11px] text-gray-700 font-bold flex items-center gap-1.5 mt-1">
+                                        当前版本: <span className="font-mono text-blue-600">{deployedVersions.staging}</span>
+                                    </div>
+                                    <div className="mt-auto text-[10px] text-gray-400 italic group-hover:text-gray-600 transition-colors">发布前必须在此环境测试通过</div>
+                                </div>
+                                {selectedEnv === 'staging' && <div className="absolute top-2 right-2"><CheckCircle size={18} className="text-blue-600 fill-white"/></div>}
                             </div>
-                            {selectedEnv === 'prod' && <div className="absolute top-2 right-2"><CheckCircle size={16} className="text-[#55635C] fill-[#55635C]/10"/></div>}
+
+                            <div 
+                                onClick={() => setSelectedEnv('prod')}
+                                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative group ${selectedEnv === 'prod' ? 'border-[#55635C] bg-[#55635C]/5 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
+                            >
+                                <div className={`text-xs font-bold mb-4 uppercase tracking-widest ${selectedEnv === 'prod' ? 'text-[#323A36]' : 'text-gray-500'}`}>生产环境 (PROD)</div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="inline-flex items-center w-fit px-2 py-0.5 rounded bg-sage-100 text-sage-700 text-[10px] font-bold border border-sage-200">在线</span>
+                                    <div className="text-[11px] text-gray-700 font-bold flex items-center gap-1.5 mt-1">
+                                        当前版本: <span className="font-mono text-sage-700">{deployedVersions.prod}</span>
+                                    </div>
+                                    <div className="text-[11px] text-gray-400 flex items-center gap-1.5">
+                                        <ShieldCheck size={12}/> 公网可访问
+                                    </div>
+                                </div>
+                                {selectedEnv === 'prod' && <div className="absolute top-2 right-2"><CheckCircle size={18} className="text-[#55635C] fill-white"/></div>}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Version Section */}
-                    <div className="space-y-3">
-                        <label className="text-sm font-bold text-gray-800 flex items-center gap-1">
-                            <span className="text-red-500">*</span>版本号
-                        </label>
-                        <div className="max-w-sm">
-                            <input 
-                                type="text"
-                                value={releaseVersion}
-                                onChange={(e) => setReleaseVersion(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#55635C] hover:border-gray-300 transition-colors"
-                                placeholder="例如 v1.1.0"
-                            />
-                            <p className="text-[10px] text-gray-400 mt-1">默认推荐版本号比当前已发布版本 (v1.0.0) 高一个次版本。</p>
+                    {/* Prod Hint if restricted */}
+                    {isProdRestricted && (
+                        <div className="p-4 bg-orange-50 border border-orange-200 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                            <AlertCircle size={20} className="text-orange-500 shrink-0"/>
+                            <p className="text-sm text-orange-700 font-medium">
+                                限制：生产环境只能发布已经在预发环境部署的版本。请先将 <b>{releaseVersion}</b> 部署到预发环境并完成测试。
+                            </p>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Attribution Section */}
+                    {/* Meta Section */}
                     <div className="space-y-3">
                         <label className="text-sm font-bold text-gray-800 flex items-center gap-1">
                             <span className="text-red-500">*</span>归属空间
                         </label>
-                        <div className="relative group max-w-sm">
+                        <div className="relative group max-w-md">
                             <select 
                                 value={selectedSpace}
                                 onChange={(e) => setSelectedSpace(e.target.value)}
-                                className="w-full appearance-none px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#55635C] pr-10 hover:border-gray-300 transition-colors"
+                                className="w-full appearance-none px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 pr-10 hover:border-gray-300 transition-colors shadow-inner"
                             >
-                                <option value="个人空间">默认个人空间，支持切换</option>
+                                <option value="个人空间">默认个人空间</option>
                                 <option value="团队空间 A">研发团队 A</option>
                                 <option value="数据组">数据分析组</option>
                             </select>
                             <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-gray-600"/>
                         </div>
+                        <p className="text-[10px] text-gray-400 mt-1">当前智能体记录版本：{deployedVersions.dev} (DEV), {deployedVersions.staging} (PRE), {deployedVersions.prod} (PROD)</p>
                     </div>
 
                     {/* Change Description Section */}
@@ -1610,14 +1791,17 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                             value={changeDesc}
                             onChange={(e) => setChangeDesc(e.target.value)}
                             readOnly={isDeployed}
-                            className={`w-full h-48 p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm leading-relaxed text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#55635C] resize-none custom-scrollbar transition-all ${isDeployed ? 'bg-gray-100 cursor-not-allowed opacity-80' : 'hover:border-gray-300 focus:bg-white'}`}
+                            className={`w-full h-40 p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm leading-relaxed text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none custom-scrollbar transition-all shadow-inner ${isDeployed ? 'bg-gray-100 cursor-not-allowed opacity-80' : 'hover:border-gray-300 focus:bg-white'}`}
                             placeholder="请描述本次发布的变更点..."
                         />
                     </div>
 
                     {/* Diff Section */}
                     <div className="space-y-4">
-                        <h3 className="text-sm font-bold text-gray-800">变更 diff</h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-gray-800">变更文件比对</h3>
+                            <span className="text-[10px] text-gray-400 font-mono">1 FILE CHANGED</span>
+                        </div>
                         <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-gray-50">
                              <div className="bg-white px-4 py-2 border-b border-gray-100 flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
@@ -1633,23 +1817,19 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                                     <tbody>
                                         <tr>
                                             <td className="w-10 text-right text-gray-300 bg-gray-50/50 p-1 border-r border-gray-100 select-none">42</td>
-                                            <td className="p-1 pl-4 text-gray-600 bg-white">"name": "智能体助手",</td>
+                                            <td className="p-1 pl-4 text-gray-600 bg-white">"name": "{agentName}",</td>
                                         </tr>
                                         <tr className="bg-red-50">
                                             <td className="w-10 text-right text-red-300 p-1 border-r border-red-100 select-none">-</td>
-                                            <td className="p-1 pl-4 text-red-600">"version": "v1.0.0",</td>
+                                            <td className="p-1 pl-4 text-red-600">"version": "{selectedEnv === 'prod' ? deployedVersions.prod : (selectedEnv === 'staging' ? deployedVersions.staging : deployedVersions.dev)}",</td>
                                         </tr>
                                         <tr className="bg-green-50">
                                             <td className="w-10 text-right text-green-300 p-1 border-r border-green-100 select-none">+</td>
-                                            <td className="p-1 pl-4 text-green-600">"version": "v1.1.0",</td>
+                                            <td className="p-1 pl-4 text-green-600">"version": "{releaseVersion}",</td>
                                         </tr>
                                         <tr className="bg-green-50">
                                             <td className="w-10 text-right text-green-300 p-1 border-r border-green-100 select-none">+</td>
-                                            <td className="p-1 pl-4 text-green-600">"version": "v1.1.0",</td>
-                                        </tr>
-                                        <tr className="bg-green-50">
-                                            <td className="w-10 text-right text-green-300 p-1 border-r border-green-100 select-none">+</td>
-                                            <td className="p-1 pl-4 text-green-600">"model": "gemini-3-flash",</td>
+                                            <td className="p-1 pl-4 text-green-600">"model": "{selectedModel}",</td>
                                         </tr>
                                         <tr>
                                             <td className="w-10 text-right text-gray-300 bg-gray-50/50 p-1 border-r border-gray-100 select-none">46</td>
@@ -1691,9 +1871,9 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
                     onClick={() => setShowVersionHistory(!showVersionHistory)}
                     className="flex items-center gap-2 text-xs cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
                 >
-                    <span className="text-gray-400">版本号</span>
+                    <span className="text-gray-400">最新构建</span>
                     <span className="font-mono text-gray-700 bg-gray-100 px-1.5 rounded flex items-center gap-1">
-                        v1.0.0
+                        {releaseVersion}
                         <ChevronDown size={10} className={`transition-transform ${showVersionHistory ? 'rotate-180' : ''}`}/>
                     </span>
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 ml-1"></span>
@@ -1743,9 +1923,10 @@ export const AgentBuilder: React.FC<AgentBuilderProps> = ({ onClose, isLoading =
              </div>
              <button 
                 onClick={() => setShowReleaseDrawer(true)}
-                className="px-4 py-1.5 bg-[#55635C] text-white text-xs font-semibold rounded-lg hover:bg-[#444F49] shadow-sm transition-colors"
+                className="px-4 py-1.5 bg-[#55635C] text-white text-xs font-bold rounded-lg hover:bg-[#444F49] shadow-sm transition-all flex items-center gap-1.5 active-press"
             >
-                发布
+                <Rocket size={14} />
+                部署与发布
             </button>
              <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100" title="退出构建"><X size={18}/></button>
         </div>

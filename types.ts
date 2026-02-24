@@ -11,6 +11,7 @@ export interface ChatSession {
   messages: Message[];
   updatedAt: number;
   groupId?: string; 
+  isShared?: boolean;
 }
 
 export interface Agent {
