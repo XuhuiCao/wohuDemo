@@ -494,7 +494,6 @@ export const Playground: React.FC<PlaygroundProps> = ({
               <div className="flex-1 flex flex-col items-center justify-center p-4 bg-white relative">
                   <div className="mb-14 text-center relative z-10">
                       <h2 className="text-5xl font-bold text-stone-900 tracking-tighter drop-shadow-sm mb-4 leading-tight">你只管说，剩下的交给卧虎。</h2>
-                      <p className="text-stone-400 text-lg font-medium">Sophisticated AI Infrastructure for Modern Teams.</p>
                   </div>
                   
                   <InputArea 
